@@ -55,7 +55,7 @@
 import { ref, computed } from 'vue';
 import { useQuasar } from 'quasar';
 import GradientChip from 'components/GradientChip.vue';
-import { Abonement } from 'boot/models/pages/indexPage';
+import { Abonement } from 'models/indexPage';
 
 interface ResponsiveBreakpoint {
   lgAndDown: number;

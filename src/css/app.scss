@@ -6,6 +6,10 @@ body {
   font-weight: 300;
 }
 
+a {
+  text-decoration: none;
+}
+
 .bg-gradient {
   background: linear-gradient(91.22deg, $primary, $secondary);
 }

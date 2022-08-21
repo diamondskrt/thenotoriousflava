@@ -5,7 +5,9 @@
     :class="{ 'q-header--is-scrolled': isScrolled }"
   >
     <q-toolbar>
-      <img src="~assets/logo.png" alt="logo" height="60" />
+      <router-link to="/">
+        <img src="~assets/logo.png" alt="logo" height="60" />
+      </router-link>
 
       <q-space />
 
@@ -22,10 +24,49 @@
 
         <q-space />
 
-        <q-btn color="accent" square label="Войти" />
+        <q-btn v-if="user" color="accent" square>
+          <q-avatar color="primary" size="sm">
+            {{ getUserFirstLetter(user.name) }}
+          </q-avatar>
+          <q-menu class="bg-accent">
+            <q-list style="min-width: 200px" color="accent">
+              <q-item clickable v-close-popup>
+                <q-item-section>New tab</q-item-section>
+              </q-item>
+              <q-item clickable v-close-popup>
+                <q-item-section>New incognito tab</q-item-section>
+              </q-item>
+              <q-separator />
+              <q-item clickable v-close-popup>
+                <q-item-section>Recent tabs</q-item-section>
+              </q-item>
+              <q-item clickable v-close-popup>
+                <q-item-section>History</q-item-section>
+              </q-item>
+              <q-item clickable v-close-popup>
+                <q-item-section>Downloads</q-item-section>
+              </q-item>
+              <q-separator />
+              <q-item clickable v-close-popup @click="onSignOut">
+                <q-item-section>Выйти</q-item-section>
+              </q-item>
+            </q-list>
+          </q-menu>
+          <q-icon name="expand_more" class="q-ml-xs" />
+        </q-btn>
+
+        <router-link v-else to="/auth">
+          <q-btn color="accent" square label="Войти" />
+        </router-link>
       </template>
+
       <template v-else>
-        <q-btn square color="accent" icon="drag_handle" />
+        <q-btn
+          square
+          color="accent"
+          icon="drag_handle"
+          @click="emits('openDrawer')"
+        />
       </template>
     </q-toolbar>
   </q-header>
@@ -34,6 +75,9 @@
 <script setup lang="ts">
 import { ref, onBeforeUnmount } from 'vue';
 import { useQuasar } from 'quasar';
+import { storeToRefs } from 'pinia';
+import { useAuthStore } from 'stores/auth';
+import { firebaseService } from 'services/firebase';
 
 interface TheHeaderProps {
   reveal?: boolean;
@@ -44,9 +88,19 @@ interface menuItems {
   link: string;
 }
 
+const { user } = storeToRefs(useAuthStore());
+
 withDefaults(defineProps<TheHeaderProps>(), {
   reveal: false,
 });
+
+const emits = defineEmits<{
+  (e: 'openDrawer'): void;
+}>();
+
+const getUserFirstLetter = (name: string) => {
+  return name ? name.charAt(0).toUpperCase() : 'U';
+};
 
 const $q = useQuasar();
 
@@ -73,6 +127,10 @@ window.addEventListener('scroll', onScroll);
 onBeforeUnmount(() => {
   window.removeEventListener('scroll', onScroll);
 });
+
+const onSignOut = async () => {
+  await firebaseService.signOut();
+};
 </script>
 
 <style scoped lang="scss">

@@ -132,7 +132,10 @@
       <div class="media__section q-mt-xl">
         <div class="row q-col-gutter-md">
           <div class="col-12 col-md-6">
-            <div class="media__video flex justify-center items-center">
+            <div
+              class="media__video flex justify-center items-center"
+              @click="showVideoOverlay = true"
+            >
               <q-btn
                 round
                 size="md"
@@ -150,22 +153,42 @@
                   scrolling="no"
                   frameborder="no"
                   allow="autoplay"
-                  samesite="https://soundcloud.com/"
+                  samesite="none"
                   src="https://clck.ru/U6Tu6"
                   class="full-height"
                 ></iframe>
               </div>
-              <div class="media__grid-item instagram-1"></div>
-              <div class="media__grid-item instagram-2"></div>
+              <a
+                href="https://www.instagram.com/tnflava/"
+                target="_blank"
+                class="media__grid-item instagram-1 shadow flex items-end text-white q-pa-sm"
+              >
+                <span>
+                  @tnflava on instagram: лучшая студия брейк-данса в Уфе.
+                  Расписание тренировок: Пн, ср и пт с 20:00 до 21:00.
+                  Приглашаем детей от 7 до 14 лет.
+                </span>
+              </a>
+              <a
+                href="https://www.instagram.com/p/CT2YyRCAvhN/"
+                target="_blank"
+                class="media__grid-item instagram-2 shadow flex items-end text-white q-pa-sm"
+              >
+                <span>
+                  @tnflava приглашает всех желающих в нашу группу. Все вопросы
+                  вы можете задать в директ или по телефону: +7 (937) 332-36-35
+                </span>
+              </a>
             </div>
           </div>
         </div>
       </div>
     </section>
-    <form-dialog
+    <note-dialog
       v-model:dialog="showFormDialog"
       v-model:direction="selectedDirection"
     />
+    <video-overlay v-model:dialog="showVideoOverlay" />
   </main>
 </template>
 
@@ -173,13 +196,9 @@
 import { ref } from 'vue';
 import { useQuasar } from 'quasar';
 import TheCarousel from 'src/components/TheCarousel.vue';
-import FormDialog from 'src/components/FormDialog.vue';
-import {
-  Direction,
-  Abonement,
-  TableRow,
-  Trainer,
-} from 'boot/models/pages/indexPage';
+import NoteDialog from 'src/components/NoteDialog.vue';
+import VideoOverlay from 'src/components/VideoOverlay.vue';
+import { Direction, Abonement, TableRow, Trainer } from 'models/indexPage';
 import { QTableColumn } from 'quasar';
 
 const $q = useQuasar();
@@ -347,12 +366,14 @@ const trainers: Trainer[] = [
       обучать этому других. Совершентсвует свои профессиональные
       навыки, участвуя в различных соревнованиях и фестивалях.
       Имеет опыт как групповой, так и индивидуальной работы с
-      детьми
+      детьми.
     `,
   },
 ];
 
 const showFormDialog = ref(false);
+
+const showVideoOverlay = ref(false);
 
 const selectedDirection = ref('Танцы');
 
@@ -437,6 +458,10 @@ const getPaddings = () => {
 
     &-item {
       height: 260px;
+
+      span {
+        z-index: 1;
+      }
 
       &:nth-child(1) {
         grid-area: a;
