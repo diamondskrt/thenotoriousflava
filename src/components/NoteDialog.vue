@@ -1,10 +1,17 @@
 <template>
   <q-dialog :model-value="openDialog" full-width full-height maximized>
     <div class="flex justify-center items-center bg-black">
-      <div class="close" @click="openDialog = false">
+      <div class="close" @click="onCloseDialog">
         <the-icon name="close" :size="20" />
       </div>
-      <div class="form">
+      <div v-if="success" class="text-center">
+        <the-icon name="success" :size="60" class="q-ml-md" />
+        <div class="text-subtitle1 text-center q-my-md">
+          Ваша заявка успешно отправлена!
+        </div>
+        <q-btn color="primary" @click="onCloseDialog">OK</q-btn>
+      </div>
+      <div v-else class="form">
         <div class="text-h6 text-weight-regular text-uppercase text-center">
           {{ direction }}
         </div>
@@ -15,7 +22,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import TheIcon from 'components/TheIcon.vue';
 import TheForm from 'components/TheForm.vue';
 import { firebaseService } from 'services/firebase';
@@ -25,16 +32,16 @@ interface NoteDialogProps {
   direction: string;
 }
 
-interface Form {
-  name: string;
-  phone: string;
-}
-
 interface Note {
   userName: string;
   userPhone: string;
   direction: string;
   processed: boolean;
+}
+
+interface Form {
+  name: string;
+  phone: string;
 }
 
 const props = withDefaults(defineProps<NoteDialogProps>(), {
@@ -43,6 +50,7 @@ const props = withDefaults(defineProps<NoteDialogProps>(), {
 
 const emits = defineEmits<{
   (e: 'update:dialog', value: boolean): void;
+  (e: 'setDoc'): void;
 }>();
 
 const openDialog = computed({
@@ -54,13 +62,33 @@ const openDialog = computed({
   },
 });
 
+watch(openDialog, (newValue) => {
+  if (!newValue && success.value) {
+    success.value = false;
+  }
+});
+
+const success = ref(false);
+
+const onCloseDialog = () => {
+  openDialog.value = false;
+
+  if (success.value) {
+    success.value = false;
+  }
+};
+
 const submit = async (form: Form) => {
-  await firebaseService.add<Note>('notes', {
-    userName: form.name,
-    userPhone: form.phone,
+  const { name, phone } = form;
+
+  await firebaseService.setDoc<Note>('notes', {
+    userName: name,
+    userPhone: phone,
     direction: props.direction,
     processed: false,
   });
+
+  success.value = true;
 };
 </script>
 

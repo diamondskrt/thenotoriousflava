@@ -1,6 +1,6 @@
 <template>
   <q-layout view="lhr lpr lfr">
-    <the-header reveal @open-drawer="drawer = !drawer" />
+    <the-header fixed @open-drawer="drawer = !drawer" />
     <q-drawer
       v-model="drawer"
       side="right"

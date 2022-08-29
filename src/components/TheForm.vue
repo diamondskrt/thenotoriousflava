@@ -49,6 +49,7 @@
     </div>
 
     <div class="text-left">
+      <slot name="left-button" />
       <q-btn square color="accent" @click="onSubmit" label="Отправить" />
     </div>
   </q-form>
@@ -59,7 +60,7 @@ import { ref, reactive } from 'vue';
 import { QForm } from 'quasar';
 
 interface FormProps {
-  type: string;
+  type?: string;
 }
 
 interface Form {
@@ -69,7 +70,7 @@ interface Form {
   password?: string;
 }
 
-withDefaults(defineProps<FormProps>(), {
+const props = withDefaults(defineProps<FormProps>(), {
   type: 'note',
 });
 
@@ -77,12 +78,16 @@ const emits = defineEmits<{
   (e: 'submit', form: Form): void;
 }>();
 
-const form = reactive<Form>({
-  name: '',
-  phone: '',
-  email: '',
-  password: '',
-});
+const form =
+  props.type === 'note'
+    ? reactive<Form>({
+        name: '',
+        phone: '',
+      })
+    : reactive<Form>({
+        email: '',
+        password: '',
+      });
 
 const formRef = ref<QForm | null>(null);
 
@@ -114,6 +119,20 @@ const passwordRules = [
     val.length >= 6 || 'Пароль должен содержать не менее 6 символов',
 ];
 
+const clearForm = () => {
+  if (props.type === 'note') {
+    form.name = '';
+    form.phone = '';
+  }
+
+  if (props.type === 'auth') {
+    form.email = '';
+    form.password = '';
+  }
+
+  formRef.value?.reset();
+};
+
 const onSubmit = () => {
   formRef.value?.validate().then((valid) => {
     if (valid) {
@@ -122,6 +141,8 @@ const onSubmit = () => {
       }
 
       emits('submit', form);
+
+      clearForm();
     }
   });
 };
@@ -136,6 +157,9 @@ form {
   :deep(.q-field__control),
   :deep(.q-field__marginal) {
     height: auto;
+  }
+  :deep(.q-field__prepend) {
+    margin-bottom: 1px;
   }
 }
 </style>

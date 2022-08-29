@@ -2,7 +2,7 @@
   <q-header
     :reveal="reveal"
     class="q-pa-sm"
-    :class="{ 'q-header--is-scrolled': isScrolled }"
+    :class="{ 'q-header--is-scrolled': isScrolled, fixed: fixed }"
   >
     <q-toolbar>
       <router-link to="/">
@@ -24,40 +24,64 @@
 
         <q-space />
 
-        <q-btn v-if="user" color="accent" square>
-          <q-avatar color="primary" size="sm">
-            {{ getUserFirstLetter(user.name) }}
-          </q-avatar>
-          <q-menu class="bg-accent">
-            <q-list style="min-width: 200px" color="accent">
-              <q-item clickable v-close-popup>
-                <q-item-section>New tab</q-item-section>
-              </q-item>
-              <q-item clickable v-close-popup>
-                <q-item-section>New incognito tab</q-item-section>
-              </q-item>
-              <q-separator />
-              <q-item clickable v-close-popup>
-                <q-item-section>Recent tabs</q-item-section>
-              </q-item>
-              <q-item clickable v-close-popup>
-                <q-item-section>History</q-item-section>
-              </q-item>
-              <q-item clickable v-close-popup>
-                <q-item-section>Downloads</q-item-section>
-              </q-item>
-              <q-separator />
-              <q-item clickable v-close-popup @click="onSignOut">
-                <q-item-section>Выйти</q-item-section>
-              </q-item>
-            </q-list>
-          </q-menu>
-          <q-icon name="expand_more" class="q-ml-xs" />
-        </q-btn>
+        <div class="flex items-center">
+          <router-link to="/cart">
+            <q-btn
+              color="white"
+              size="md"
+              round
+              flat
+              icon="shopping_bag"
+              class="q-mr-md"
+            >
+              <transition name="bounce">
+                <q-badge
+                  v-if="selectedAbonements.length"
+                  color="negative"
+                  floating
+                  rounded
+                />
+              </transition>
+            </q-btn>
+          </router-link>
 
-        <router-link v-else to="/auth">
-          <q-btn color="accent" square label="Войти" />
-        </router-link>
+          <q-btn v-if="user" color="accent" square>
+            <q-avatar color="primary" size="sm">
+              {{ getUserFirstLetter(user.name) }}
+            </q-avatar>
+            <q-menu class="bg-accent">
+              <q-list style="min-width: 200px" color="accent">
+                <q-item clickable v-close-popup>
+                  <q-item-section>New tab</q-item-section>
+                </q-item>
+                <q-item clickable v-close-popup>
+                  <q-item-section>New incognito tab</q-item-section>
+                </q-item>
+                <q-separator />
+                <q-item clickable v-close-popup>
+                  <q-item-section>Recent tabs</q-item-section>
+                </q-item>
+                <q-item clickable v-close-popup>
+                  <q-item-section>History</q-item-section>
+                </q-item>
+                <q-item clickable v-close-popup>
+                  <q-item-section>Downloads</q-item-section>
+                </q-item>
+                <q-separator />
+                <q-item clickable v-close-popup @click="onSignOut">
+                  <q-item-section>Выйти</q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
+            <q-icon name="expand_more" class="q-ml-xs" />
+          </q-btn>
+
+          <div v-else>
+            <router-link to="/auth">
+              <q-btn color="accent" square label="Войти" />
+            </router-link>
+          </div>
+        </div>
       </template>
 
       <template v-else>
@@ -73,14 +97,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onBeforeUnmount } from 'vue';
+import { ref, computed, onBeforeUnmount } from 'vue';
 import { useQuasar } from 'quasar';
 import { storeToRefs } from 'pinia';
 import { useAuthStore } from 'stores/auth';
 import { firebaseService } from 'services/firebase';
+import { useAbonementStore } from 'stores/abonements';
 
 interface TheHeaderProps {
   reveal?: boolean;
+  fixed?: boolean;
 }
 
 interface menuItems {
@@ -90,9 +116,7 @@ interface menuItems {
 
 const { user } = storeToRefs(useAuthStore());
 
-withDefaults(defineProps<TheHeaderProps>(), {
-  reveal: false,
-});
+defineProps<TheHeaderProps>();
 
 const emits = defineEmits<{
   (e: 'openDrawer'): void;
@@ -101,6 +125,8 @@ const emits = defineEmits<{
 const getUserFirstLetter = (name: string) => {
   return name ? name.charAt(0).toUpperCase() : 'U';
 };
+
+const abonementStore = useAbonementStore();
 
 const $q = useQuasar();
 
@@ -113,6 +139,8 @@ const menuItems: menuItems[] = [
 ];
 
 const isScrolled = ref(false);
+
+const selectedAbonements = computed(() => abonementStore.selectedAbonements);
 
 const onScroll = () => {
   if (window.pageYOffset) {
@@ -136,8 +164,15 @@ const onSignOut = async () => {
 <style scoped lang="scss">
 .q-header {
   background: rgba(0, 0, 0, 0);
+  &.fixed {
+    position: fixed !important;
+  }
   &--is-scrolled {
     background: rgb(0, 0, 0);
+  }
+  :deep(.q-badge--floating) {
+    top: 0;
+    right: 0;
   }
 }
 </style>

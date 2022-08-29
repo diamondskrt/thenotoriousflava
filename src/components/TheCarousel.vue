@@ -19,8 +19,8 @@
     >
       <div class="row q-col-gutter-sm">
         <div
-          v-for="list in item.chunkedArray"
-          :key="list.id"
+          v-for="abonement in item.chunkedArray"
+          :key="abonement.id"
           :class="getListClass()"
         >
           <q-card
@@ -28,21 +28,45 @@
           >
             <div class="carousel__card-section text-center">
               <div class="text-subtitle1 text-uppercase text-weight-regular">
-                {{ list.title }}
+                {{ abonement.title }}
               </div>
               <div
                 class="text-subtitle1 text-uppercase text-weight-regular q-my-md"
               >
-                <del v-if="list.discountPrice"> {{ list.price }} ₽ </del>
-                <template v-else> {{ list.price }} ₽ </template>
+                <del v-if="abonement.discountPrice">
+                  {{ abonement.price }} ₽
+                </del>
+                <template v-else>{{ abonement.price }} ₽</template>
               </div>
-              <div v-if="list.discountPrice">
+              <div v-if="abonement.discountPrice">
                 <gradient-chip
-                  :bgWhiteText="list.discountPrice"
+                  :bgWhiteText="abonement.discountPrice"
                   text="в первый месяц"
                 />
               </div>
-              <q-btn color="accent" square class="q-mt-md">В корзину</q-btn>
+
+              <div
+                v-if="foundAbonement(abonement)"
+                class="flex justify-center items-center q-mt-md"
+              >
+                <q-btn color="accent" @click="decrement(abonement)">
+                  <span>-</span>
+                </q-btn>
+                <div class="q-mx-sm">
+                  {{ foundAbonement(abonement).counter }} шт.
+                </div>
+                <q-btn color="accent" @click="increment(abonement)">
+                  <span>+</span>
+                </q-btn>
+              </div>
+              <q-btn
+                v-else
+                color="accent"
+                class="q-mt-md"
+                @click="onAddAbonement(abonement)"
+              >
+                В корзину
+              </q-btn>
             </div>
           </q-card>
         </div>
@@ -55,6 +79,7 @@
 import { ref, computed } from 'vue';
 import { useQuasar } from 'quasar';
 import GradientChip from 'components/GradientChip.vue';
+import { useAbonementStore } from 'stores/abonements';
 import { Abonement } from 'models/indexPage';
 
 interface ResponsiveBreakpoint {
@@ -71,6 +96,8 @@ interface TheCarouselProps {
 interface ListClasses {
   [key: number]: string;
 }
+
+const abonementStore = useAbonementStore();
 
 const $q = useQuasar();
 
@@ -94,20 +121,19 @@ const getPerPage = computed(() => {
     : props.perPage;
 });
 
-const chunkArray = (arr: Abonement[], chunkSize: number) => {
+const abonementItems = computed(() => props.items);
+
+const chunkedCarouselItems = computed(() => {
+  const chunkSize = getPerPage.value;
   const res = [];
 
-  for (let i = 0; i < arr.length; i += chunkSize) {
-    const chunk = arr.slice(i, i + chunkSize);
+  for (let i = 0; i < abonementItems.value.length; i += chunkSize) {
+    const chunk = abonementItems.value.slice(i, i + chunkSize);
     res.push({ chunkedArray: chunk });
   }
 
   return res;
-};
-
-const chunkedCarouselItems = computed(() =>
-  chunkArray(props.items, getPerPage.value)
-);
+});
 
 const getListClass = () => {
   const listClasses: ListClasses = {
@@ -117,6 +143,24 @@ const getListClass = () => {
   };
 
   return listClasses[getPerPage.value];
+};
+
+const foundAbonement = (abonement: Abonement) => {
+  return abonementStore.selectedAbonements.find(
+    (el: Abonement) => el.id === abonement.id
+  );
+};
+
+const onAddAbonement = (abonement: Abonement) => {
+  abonementStore.addAbonement(abonement);
+};
+
+const increment = (abonement: Abonement) => {
+  abonementStore.increment(abonement);
+};
+
+const decrement = (abonement: Abonement) => {
+  abonementStore.decrement(abonement);
 };
 </script>
 

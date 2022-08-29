@@ -18,7 +18,7 @@
         </div>
       </div>
     </section>
-    <section class="about" :class="getPaddings()">
+    <section class="about" :class="getPadding">
       <div class="text-h4 text-center text-uppercase">
         Танцуй, <span class="text-primary">вдохновляй</span>, создавай
       </div>
@@ -70,7 +70,7 @@
         </div>
       </div>
     </section>
-    <section class="abonements" :class="getPaddings()">
+    <section class="abonements" :class="getPadding">
       <div class="text-h4 text-center text-uppercase">Абонементы</div>
       <div class="abonements__section flex q-mt-xl">
         <div class="abonements__box"></div>
@@ -79,7 +79,7 @@
         </div>
       </div>
     </section>
-    <section class="schedule" :class="getPaddings()">
+    <section class="schedule" :class="getPadding">
       <div class="text-h4 text-center text-uppercase">Расписание</div>
       <div class="schedule__section q-mt-xl">
         <q-table
@@ -92,7 +92,7 @@
         />
       </div>
     </section>
-    <section class="trainers" :class="getPaddings()">
+    <section class="trainers" :class="getPadding">
       <div class="text-h4 text-center text-uppercase">Тренерский состав</div>
       <div class="trainers__section q-mt-xl">
         <div class="row q-col-gutter-md">
@@ -127,7 +127,7 @@
         </div>
       </div>
     </section>
-    <section class="media" :class="getPaddings()">
+    <section class="media" :class="getPadding">
       <div class="text-h4 text-center text-uppercase">Медиа</div>
       <div class="media__section q-mt-xl">
         <div class="row q-col-gutter-md">
@@ -187,19 +187,20 @@
     <note-dialog
       v-model:dialog="showFormDialog"
       v-model:direction="selectedDirection"
+      @set-doc="clearData"
     />
     <video-overlay v-model:dialog="showVideoOverlay" />
   </main>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { useQuasar } from 'quasar';
+import { ref, computed } from 'vue';
+import { useQuasar, QTableColumn } from 'quasar';
 import TheCarousel from 'src/components/TheCarousel.vue';
 import NoteDialog from 'src/components/NoteDialog.vue';
 import VideoOverlay from 'src/components/VideoOverlay.vue';
-import { Direction, Abonement, TableRow, Trainer } from 'models/indexPage';
-import { QTableColumn } from 'quasar';
+import { Direction, TableRow, Trainer } from 'models/indexPage';
+import { Abonement } from 'models/indexPage';
 
 const $q = useQuasar();
 
@@ -282,30 +283,40 @@ const abonementItems: Abonement[] = [
     title: 'Абонемент на 12 занятий',
     price: 3000,
     discountPrice: 2550,
+    total: 2550,
+    counter: 1,
   },
   {
     id: 2,
     title: 'Абонемент на 8 занятий',
     price: 2400,
     discountPrice: 2040,
+    total: 2040,
+    counter: 1,
   },
   {
     id: 3,
     title: 'Абонемент на 4 занятия',
     price: 1400,
-    discountPrice: 0,
+    discountPrice: null,
+    total: 1400,
+    counter: 1,
   },
   {
     id: 4,
     title: 'Разовое посещение',
     price: 400,
-    discountPrice: 0,
+    discountPrice: null,
+    total: 400,
+    counter: 1,
   },
   {
     id: 5,
     title: 'Индивидуальные тренировки',
-    price: 400,
-    discountPrice: 0,
+    price: 1200,
+    discountPrice: null,
+    total: 1200,
+    counter: 1,
   },
 ];
 
@@ -377,13 +388,17 @@ const showVideoOverlay = ref(false);
 
 const selectedDirection = ref('Танцы');
 
+const getPadding = computed(() =>
+  $q.screen.gt.sm ? 'q-px-xl q-py-xl' : 'q-px-md q-py-xl'
+);
+
 const onOpenFormDialog = (direction: Direction) => {
   showFormDialog.value = true;
   selectedDirection.value = direction.title;
 };
 
-const getPaddings = () => {
-  return $q.screen.gt.sm ? 'q-px-xl q-py-xl' : 'q-px-md q-py-xl';
+const clearData = () => {
+  selectedDirection.value === 'Танцы';
 };
 </script>
 
