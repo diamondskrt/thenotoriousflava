@@ -18,7 +18,7 @@
         </div>
       </div>
     </section>
-    <section class="about" :class="getPaddings()">
+    <section class="about" :class="getPadding">
       <div class="text-h4 text-center text-uppercase">
         Танцуй, <span class="text-primary">вдохновляй</span>, создавай
       </div>
@@ -70,7 +70,7 @@
         </div>
       </div>
     </section>
-    <section class="abonements" :class="getPaddings()">
+    <section class="abonements" :class="getPadding">
       <div class="text-h4 text-center text-uppercase">Абонементы</div>
       <div class="abonements__section flex q-mt-xl">
         <div class="abonements__box"></div>
@@ -79,7 +79,7 @@
         </div>
       </div>
     </section>
-    <section class="schedule" :class="getPaddings()">
+    <section class="schedule" :class="getPadding">
       <div class="text-h4 text-center text-uppercase">Расписание</div>
       <div class="schedule__section q-mt-xl">
         <q-table
@@ -92,7 +92,7 @@
         />
       </div>
     </section>
-    <section class="trainers" :class="getPaddings()">
+    <section class="trainers" :class="getPadding">
       <div class="text-h4 text-center text-uppercase">Тренерский состав</div>
       <div class="trainers__section q-mt-xl">
         <div class="row q-col-gutter-md">
@@ -127,12 +127,15 @@
         </div>
       </div>
     </section>
-    <section class="media" :class="getPaddings()">
+    <section class="media" :class="getPadding">
       <div class="text-h4 text-center text-uppercase">Медиа</div>
       <div class="media__section q-mt-xl">
         <div class="row q-col-gutter-md">
           <div class="col-12 col-md-6">
-            <div class="media__video flex justify-center items-center">
+            <div
+              class="media__video flex justify-center items-center"
+              @click="showVideoOverlay = true"
+            >
               <q-btn
                 round
                 size="md"
@@ -150,37 +153,54 @@
                   scrolling="no"
                   frameborder="no"
                   allow="autoplay"
-                  samesite="https://soundcloud.com/"
+                  samesite="none"
                   src="https://clck.ru/U6Tu6"
                   class="full-height"
                 ></iframe>
               </div>
-              <div class="media__grid-item instagram-1"></div>
-              <div class="media__grid-item instagram-2"></div>
+              <a
+                href="https://www.instagram.com/tnflava/"
+                target="_blank"
+                class="media__grid-item instagram-1 shadow flex items-end text-white q-pa-sm"
+              >
+                <span>
+                  @tnflava on instagram: лучшая студия брейк-данса в Уфе.
+                  Расписание тренировок: Пн, ср и пт с 20:00 до 21:00.
+                  Приглашаем детей от 7 до 14 лет.
+                </span>
+              </a>
+              <a
+                href="https://www.instagram.com/p/CT2YyRCAvhN/"
+                target="_blank"
+                class="media__grid-item instagram-2 shadow flex items-end text-white q-pa-sm"
+              >
+                <span>
+                  @tnflava приглашает всех желающих в нашу группу. Все вопросы
+                  вы можете задать в директ или по телефону: +7 (937) 332-36-35
+                </span>
+              </a>
             </div>
           </div>
         </div>
       </div>
     </section>
-    <form-dialog
+    <note-dialog
       v-model:dialog="showFormDialog"
       v-model:direction="selectedDirection"
+      @set-doc="clearData"
     />
+    <video-overlay v-model:dialog="showVideoOverlay" />
   </main>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { useQuasar } from 'quasar';
+import { ref, computed } from 'vue';
+import { useQuasar, QTableColumn } from 'quasar';
 import TheCarousel from 'src/components/TheCarousel.vue';
-import FormDialog from 'src/components/FormDialog.vue';
-import {
-  Direction,
-  Abonement,
-  TableRow,
-  Trainer,
-} from 'boot/models/pages/indexPage';
-import { QTableColumn } from 'quasar';
+import NoteDialog from 'src/components/NoteDialog.vue';
+import VideoOverlay from 'src/components/VideoOverlay.vue';
+import { Direction, TableRow, Trainer } from 'models/indexPage';
+import { Abonement } from 'models/indexPage';
 
 const $q = useQuasar();
 
@@ -263,30 +283,40 @@ const abonementItems: Abonement[] = [
     title: 'Абонемент на 12 занятий',
     price: 3000,
     discountPrice: 2550,
+    total: 2550,
+    counter: 1,
   },
   {
     id: 2,
     title: 'Абонемент на 8 занятий',
     price: 2400,
     discountPrice: 2040,
+    total: 2040,
+    counter: 1,
   },
   {
     id: 3,
     title: 'Абонемент на 4 занятия',
     price: 1400,
-    discountPrice: 0,
+    discountPrice: null,
+    total: 1400,
+    counter: 1,
   },
   {
     id: 4,
     title: 'Разовое посещение',
     price: 400,
-    discountPrice: 0,
+    discountPrice: null,
+    total: 400,
+    counter: 1,
   },
   {
     id: 5,
     title: 'Индивидуальные тренировки',
-    price: 400,
-    discountPrice: 0,
+    price: 1200,
+    discountPrice: null,
+    total: 1200,
+    counter: 1,
   },
 ];
 
@@ -347,22 +377,28 @@ const trainers: Trainer[] = [
       обучать этому других. Совершентсвует свои профессиональные
       навыки, участвуя в различных соревнованиях и фестивалях.
       Имеет опыт как групповой, так и индивидуальной работы с
-      детьми
+      детьми.
     `,
   },
 ];
 
 const showFormDialog = ref(false);
 
+const showVideoOverlay = ref(false);
+
 const selectedDirection = ref('Танцы');
+
+const getPadding = computed(() =>
+  $q.screen.gt.sm ? 'q-px-xl q-py-xl' : 'q-px-md q-py-xl'
+);
 
 const onOpenFormDialog = (direction: Direction) => {
   showFormDialog.value = true;
   selectedDirection.value = direction.title;
 };
 
-const getPaddings = () => {
-  return $q.screen.gt.sm ? 'q-px-xl q-py-xl' : 'q-px-md q-py-xl';
+const clearData = () => {
+  selectedDirection.value === 'Танцы';
 };
 </script>
 
@@ -437,6 +473,10 @@ const getPaddings = () => {
 
     &-item {
       height: 260px;
+
+      span {
+        z-index: 1;
+      }
 
       &:nth-child(1) {
         grid-area: a;

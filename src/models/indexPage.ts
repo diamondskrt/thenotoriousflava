@@ -10,7 +10,9 @@ export interface Abonement {
   id: number;
   title: string;
   price: number;
-  discountPrice: number;
+  discountPrice: number | null;
+  total: number;
+  counter: number;
 }
 
 export interface TableRow {
