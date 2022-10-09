@@ -5,7 +5,7 @@ import {
   createWebHashHistory,
   createWebHistory,
 } from 'vue-router';
-import { useAuthStore } from 'stores/auth';
+import { useFirebaseStore } from 'stores/firebase';
 
 import routes from './routes';
 
@@ -36,8 +36,8 @@ export default route(function (/* { store, ssrContext } */) {
   });
 
   Router.beforeEach(async (to, from, next) => {
-    const authStore = useAuthStore();
-    const user = authStore.user;
+    const firebaseStore = useFirebaseStore();
+    const user = firebaseStore.user;
     const auth = to.meta.auth;
 
     if (auth && !user) {

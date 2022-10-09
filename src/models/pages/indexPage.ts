@@ -1,4 +1,4 @@
-export interface Direction {
+export interface IDirection {
   id: number;
   title: string;
   ageCategory: number;
@@ -6,7 +6,7 @@ export interface Direction {
   description: string;
 }
 
-export interface Abonement {
+export interface IAbonement {
   id: number;
   title: string;
   price: number;
@@ -15,7 +15,7 @@ export interface Abonement {
   counter: number;
 }
 
-export interface TableRow {
+export interface ITableRow {
   time: string | null;
   mon: string | null;
   tue: string | null;
@@ -24,7 +24,7 @@ export interface TableRow {
   fri: string | null;
 }
 
-export interface Trainer {
+export interface ITrainer {
   name: string;
   img: string;
   direction: string;

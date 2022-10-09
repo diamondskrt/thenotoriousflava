@@ -1,27 +1,27 @@
 import { defineStore } from 'pinia';
 import { loadState, saveState, clearState } from 'helpers/persistedState';
-import { Abonement } from 'models/indexPage';
+import { IAbonement } from 'models/pages/indexPage';
 
 export const useAbonementStore = defineStore('abonements', {
   state: () => ({
     selectedAbonements: loadState('abonements') || [],
   }),
   actions: {
-    addAbonement(abonement: Abonement) {
+    addAbonement(abonement: IAbonement) {
       this.selectedAbonements.push(abonement);
 
       saveState('abonements', this.selectedAbonements);
     },
-    removeAbonement(abonement: Abonement) {
+    removeAbonement(abonement: IAbonement) {
       this.selectedAbonements = this.selectedAbonements.filter(
-        (el: Abonement) => el.id !== abonement.id
+        (el: IAbonement) => el.id !== abonement.id
       );
 
       saveState('abonements', this.selectedAbonements);
     },
-    increment(abonement: Abonement) {
+    increment(abonement: IAbonement) {
       const foundAbonement = this.selectedAbonements.find(
-        (el: Abonement) => el.id === abonement.id
+        (el: IAbonement) => el.id === abonement.id
       );
 
       if (foundAbonement && foundAbonement.counter < 5) {
@@ -33,9 +33,9 @@ export const useAbonementStore = defineStore('abonements', {
 
       saveState('abonements', this.selectedAbonements);
     },
-    decrement(abonement: Abonement) {
+    decrement(abonement: IAbonement) {
       const foundAbonement = this.selectedAbonements.find(
-        (el: Abonement) => el.id === abonement.id
+        (el: IAbonement) => el.id === abonement.id
       );
 
       if (foundAbonement && foundAbonement.counter > 1) {

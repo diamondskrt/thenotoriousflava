@@ -6,7 +6,7 @@
     swipeable
     animated
     padding
-    infinite
+    :infinite="infinite"
     control-color="primary"
     height="auto"
     navigation
@@ -80,20 +80,21 @@ import { ref, computed } from 'vue';
 import { useQuasar } from 'quasar';
 import GradientChip from 'components/GradientChip.vue';
 import { useAbonementStore } from 'stores/abonements';
-import { Abonement } from 'models/indexPage';
+import { IAbonement } from 'models/pages/indexPage';
 
-interface ResponsiveBreakpoint {
+interface IResponsiveBreakpoint {
   lgAndDown: number;
   mdAndDown?: number;
 }
 
-interface TheCarouselProps {
+interface IBaseCarouselProps {
   perPage?: number;
-  items: Abonement[];
-  responsive?: ResponsiveBreakpoint;
+  items: IAbonement[];
+  responsive?: IResponsiveBreakpoint;
+  infinite?: boolean;
 }
 
-interface ListClasses {
+interface IListClasses {
   [key: number]: string;
 }
 
@@ -101,14 +102,15 @@ const abonementStore = useAbonementStore();
 
 const $q = useQuasar();
 
-const props = withDefaults(defineProps<TheCarouselProps>(), {
+const props = withDefaults(defineProps<IBaseCarouselProps>(), {
   perPage: 3,
-  responsive: (): ResponsiveBreakpoint => {
+  responsive: (): IResponsiveBreakpoint => {
     return {
       lgAndDown: 2,
       mdAndDown: 1,
     };
   },
+  infinite: false,
 });
 
 const slide = ref(0);
@@ -136,7 +138,7 @@ const chunkedCarouselItems = computed(() => {
 });
 
 const getListClass = () => {
-  const listClasses: ListClasses = {
+  const listClasses: IListClasses = {
     1: 'col-12',
     2: 'col-6',
     3: 'col-4',
@@ -145,21 +147,21 @@ const getListClass = () => {
   return listClasses[getPerPage.value];
 };
 
-const foundAbonement = (abonement: Abonement) => {
+const foundAbonement = (abonement: IAbonement) => {
   return abonementStore.selectedAbonements.find(
-    (el: Abonement) => el.id === abonement.id
+    (el: IAbonement) => el.id === abonement.id
   );
 };
 
-const onAddAbonement = (abonement: Abonement) => {
+const onAddAbonement = (abonement: IAbonement) => {
   abonementStore.addAbonement(abonement);
 };
 
-const increment = (abonement: Abonement) => {
+const increment = (abonement: IAbonement) => {
   abonementStore.increment(abonement);
 };
 
-const decrement = (abonement: Abonement) => {
+const decrement = (abonement: IAbonement) => {
   abonementStore.decrement(abonement);
 };
 </script>

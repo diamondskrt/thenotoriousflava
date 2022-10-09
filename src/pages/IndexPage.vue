@@ -1,6 +1,7 @@
 <template>
   <main>
     <section
+      ref="mainRef"
       class="screen flex justify-center items-center window-height overflow-hidden"
     >
       <video
@@ -11,14 +12,15 @@
       >
         <source src="~assets/bcone.mp4" type="video/mp4" />
       </video>
-      <div class="absolute text-center">
+      <div class="absolute text-center q-pa-md">
         <div class="text-h3 text-uppercase">The Notorious Flava</div>
         <div class="text-h6 text-uppercase text-weight-light q-mt-md">
           студия танцев
         </div>
       </div>
     </section>
-    <section class="about" :class="getPadding">
+
+    <section ref="directionsRef" class="about" :class="getPadding">
       <div class="text-h4 text-center text-uppercase">
         Танцуй, <span class="text-primary">вдохновляй</span>, создавай
       </div>
@@ -70,16 +72,18 @@
         </div>
       </div>
     </section>
-    <section class="abonements" :class="getPadding">
+
+    <section ref="abonementsRef" class="abonements" :class="getPadding">
       <div class="text-h4 text-center text-uppercase">Абонементы</div>
       <div class="abonements__section flex q-mt-xl">
         <div class="abonements__box"></div>
         <div class="abonements__slider">
-          <the-carousel :items="abonementItems" />
+          <base-carousel :items="abonementItems" />
         </div>
       </div>
     </section>
-    <section class="schedule" :class="getPadding">
+
+    <section ref="scheduleRef" class="schedule" :class="getPadding">
       <div class="text-h4 text-center text-uppercase">Расписание</div>
       <div class="schedule__section q-mt-xl">
         <q-table
@@ -92,6 +96,7 @@
         />
       </div>
     </section>
+
     <section class="trainers" :class="getPadding">
       <div class="text-h4 text-center text-uppercase">Тренерский состав</div>
       <div class="trainers__section q-mt-xl">
@@ -127,6 +132,7 @@
         </div>
       </div>
     </section>
+
     <section class="media" :class="getPadding">
       <div class="text-h4 text-center text-uppercase">Медиа</div>
       <div class="media__section q-mt-xl">
@@ -161,9 +167,9 @@
               <a
                 href="https://www.instagram.com/tnflava/"
                 target="_blank"
-                class="media__grid-item instagram-1 shadow flex items-end text-white q-pa-sm"
+                class="media__grid-item instagram-1 shadow flex items-end text-white q-pa-md"
               >
-                <span>
+                <span class="text-caption">
                   @tnflava on instagram: лучшая студия брейк-данса в Уфе.
                   Расписание тренировок: Пн, ср и пт с 20:00 до 21:00.
                   Приглашаем детей от 7 до 14 лет.
@@ -172,9 +178,9 @@
               <a
                 href="https://www.instagram.com/p/CT2YyRCAvhN/"
                 target="_blank"
-                class="media__grid-item instagram-2 shadow flex items-end text-white q-pa-sm"
+                class="media__grid-item instagram-2 shadow flex items-end text-white q-pa-md"
               >
-                <span>
+                <span class="text-caption">
                   @tnflava приглашает всех желающих в нашу группу. Все вопросы
                   вы можете задать в директ или по телефону: +7 (937) 332-36-35
                 </span>
@@ -184,6 +190,41 @@
         </div>
       </div>
     </section>
+
+    <section ref="contactsRef" class="contacts" :class="getPadding">
+      <div class="text-h4 text-center text-uppercase">Контакты</div>
+      <div class="contacts__section q-mt-xl">
+        <div class="row q-col-gutter-md">
+          <div class="col-12 col-md-6">
+            <div id="leaflet"></div>
+          </div>
+          <div class="col-12 col-md-6">
+            <div
+              class="d-flex column justify-center items-center text-center full-height"
+            >
+              <div class="text-subtitle1">Адрес: ул. Мажита Гафури, 27</div>
+              <div class="text-subtitle1">
+                <a href="https://clck.ru/U6TG9" target="_blank">
+                  смотреть на карте
+                </a>
+              </div>
+
+              <div class="text-subtitle1 q-my-md">
+                Телефон:
+                <a href="tel:+79373323635" target="_blank"
+                  >+7 (937) 332-36-35</a
+                >
+              </div>
+
+              <q-btn color="accent" @click="onOpenFormDialog()"
+                >Записаться</q-btn
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <note-dialog
       v-model:dialog="showFormDialog"
       v-model:direction="selectedDirection"
@@ -194,193 +235,35 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { useQuasar, QTableColumn } from 'quasar';
-import TheCarousel from 'src/components/TheCarousel.vue';
+import { ref, computed, watch, Ref, onMounted } from 'vue';
+import { useQuasar, scroll } from 'quasar';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+import BaseCarousel from 'src/components/base/BaseCarousel.vue';
 import NoteDialog from 'src/components/NoteDialog.vue';
 import VideoOverlay from 'src/components/VideoOverlay.vue';
-import { Direction, TableRow, Trainer } from 'models/indexPage';
-import { Abonement } from 'models/indexPage';
+import { IDirection } from 'models/pages/indexPage';
+import {
+  directions,
+  abonementItems,
+  tableColumns,
+  tableRows,
+  trainers,
+} from 'constants/pages/indexPage';
+
+interface IndexPageProps {
+  scrollToLink: string | null;
+}
+
+interface RefsObject {
+  [name: string]: Ref;
+}
+
+const props = defineProps<IndexPageProps>();
 
 const $q = useQuasar();
 
-const directions: Direction[] = [
-  {
-    id: 1,
-    title: 'Брейк-данс',
-    ageCategory: 7,
-    setOfGroups: false,
-    description: `
-      Уличный танец, сформировавшийся в Нью-Йорке в 60-х годах.
-      Это одно из самых популярных и зрелищных направлений,
-      включающее сложные физические элементы, насчитывающий
-      богатую историю развития и совершенствования. Кроме того,
-      брейкинг набирает особую популярность в настоящее время и
-      обладает большой перспективой развития, в 2024 году эта
-      дисциплина включена в Олимпийскую программу.
-    `,
-  },
-  {
-    id: 2,
-    title: 'Хип-хоп (choreo)',
-    setOfGroups: true,
-    ageCategory: 7,
-    description: `
-      Cпособ передачи стиля Хип-хоп с упором на перфоманс, широко
-      используется для шоу, постановок в клипах, концертах,
-      рекламе и на TV. В этом направлении внимание акцентировано
-      на точности, выразительности, музыкальности. Choreo может
-      сочетать в себе и смежные с хип-хопом стили.
-    `,
-  },
-  {
-    id: 3,
-    title: 'Дэнс-холл',
-    ageCategory: 14,
-    setOfGroups: true,
-    description: `
-      Понятие Dancehall гораздо шире, чем кажется на первый
-      взгляд. Это не просто танец под музыку, он наполнен смыслом,
-      он имеет свою историю, его необходимо хорошо узнать и
-      почувствовать, чтобы понять. Это целая культура,
-      зародившаяся в гетто Кингстона, столицы Ямайки. Дэнсхолл
-      включает в себя множество социальных танцев и, обязательно,
-      attitude (подача, характер).
-    `,
-  },
-  {
-    id: 4,
-    title: 'Вог',
-    ageCategory: 14,
-    setOfGroups: true,
-    description: `
-      Стиль танца, базирующийся на модельных позах и подиумной
-      походке. Отличительные особенности: быстрая техника движения
-      руками, вычурная манерная походка, падения, вращения,
-      обильное количество позировок, эмоциональная игра.
-      Исполняется Vogue под музыку в стиле House.
-    `,
-  },
-  {
-    id: 5,
-    title: 'High Heels',
-    ageCategory: 14,
-    setOfGroups: true,
-    description: `
-      Это танцевальное направление известно во всем мире, идея
-      исполнить популярные движения,встав на каблуки, пришла
-      известному американскому хореографу Энди Джею (Andy J.).
-      Постановщик проектов на MTV первым выложил в сеть ролики с
-      танцем в стиле хип-хоп, изюминкой которого стала обувь на
-      шпильке.
-    `,
-  },
-];
-
-const abonementItems: Abonement[] = [
-  {
-    id: 1,
-    title: 'Абонемент на 12 занятий',
-    price: 3000,
-    discountPrice: 2550,
-    total: 2550,
-    counter: 1,
-  },
-  {
-    id: 2,
-    title: 'Абонемент на 8 занятий',
-    price: 2400,
-    discountPrice: 2040,
-    total: 2040,
-    counter: 1,
-  },
-  {
-    id: 3,
-    title: 'Абонемент на 4 занятия',
-    price: 1400,
-    discountPrice: null,
-    total: 1400,
-    counter: 1,
-  },
-  {
-    id: 4,
-    title: 'Разовое посещение',
-    price: 400,
-    discountPrice: null,
-    total: 400,
-    counter: 1,
-  },
-  {
-    id: 5,
-    title: 'Индивидуальные тренировки',
-    price: 1200,
-    discountPrice: null,
-    total: 1200,
-    counter: 1,
-  },
-];
-
-const tableColumns: QTableColumn[] = [
-  { name: 'time', align: 'left', label: '', field: 'time' },
-  { name: 'mon', align: 'center', label: 'Понедельник', field: 'mon' },
-  { name: 'tue', align: 'center', label: 'Вторник', field: 'tue' },
-  { name: 'wed', align: 'center', label: 'Среда', field: 'wed' },
-  { name: 'thu', align: 'center', label: 'Четверг', field: 'thu' },
-  { name: 'fri', align: 'center', label: 'Пятница', field: 'fri' },
-];
-
-const tableRows: TableRow[] = [
-  {
-    time: '19:00',
-    mon: null,
-    tue: null,
-    wed: null,
-    thu: null,
-    fri: null,
-  },
-  {
-    time: '20:00',
-    mon: 'Брейк-данс',
-    tue: null,
-    wed: 'Брейк-данс',
-    thu: null,
-    fri: 'Брейк-данс',
-  },
-  {
-    time: '21:00',
-    mon: null,
-    tue: null,
-    wed: null,
-    thu: null,
-    fri: null,
-  },
-];
-
-const trainers: Trainer[] = [
-  {
-    name: 'Джан',
-    img: 'diamond.jpg',
-    direction: 'Брейк-данс',
-    description: `
-      Дипломированный тренер, организовывал тренировки для атлетов
-      #adidasrunners по направлению "Breakletics", сооснователь
-      проектов и коллабораций совместно с #redbullrussia и другими
-      известными брендами.
-    `,
-  },
-  {
-    name: 'Михаил',
-    img: 'boogieknight.jpg',
-    direction: 'Брейк-данс',
-    description: `
-      Человек , который в теме много лет, любит танцевать и
-      обучать этому других. Совершентсвует свои профессиональные
-      навыки, участвуя в различных соревнованиях и фестивалях.
-      Имеет опыт как групповой, так и индивидуальной работы с
-      детьми.
-    `,
-  },
-];
+const { getScrollTarget, setVerticalScrollPosition } = scroll;
 
 const showFormDialog = ref(false);
 
@@ -388,108 +271,73 @@ const showVideoOverlay = ref(false);
 
 const selectedDirection = ref('Танцы');
 
+const mainRef = ref<HTMLElement | null>(null);
+
+const directionsRef = ref<HTMLElement | null>(null);
+
+const abonementsRef = ref<HTMLElement | null>(null);
+
+const scheduleRef = ref<HTMLElement | null>(null);
+
+const contactsRef = ref<HTMLElement | null>(null);
+
+const refsObject: RefsObject = {
+  mainRef,
+  directionsRef,
+  abonementsRef,
+  scheduleRef,
+  contactsRef,
+};
+
+watch(
+  () => props.scrollToLink,
+  (newValue) => {
+    if (newValue && newValue in refsObject) {
+      const target = getScrollTarget(refsObject[newValue].value);
+      const offset =
+        newValue === 'mainRef'
+          ? refsObject[newValue].value.offsetTop
+          : refsObject[newValue].value.offsetTop - 50;
+      const duration = $q.screen.lt.md ? 600 : 400;
+      setVerticalScrollPosition(target, offset, duration);
+    }
+  }
+);
+
 const getPadding = computed(() =>
   $q.screen.gt.sm ? 'q-px-xl q-py-xl' : 'q-px-md q-py-xl'
 );
 
-const onOpenFormDialog = (direction: Direction) => {
+const onOpenFormDialog = (direction?: IDirection) => {
   showFormDialog.value = true;
-  selectedDirection.value = direction.title;
+  selectedDirection.value = direction ? direction.title : 'Танцы';
 };
 
 const clearData = () => {
   selectedDirection.value === 'Танцы';
 };
+
+const loadLeafletMap = () => {
+  const map = L.map('leaflet').setView([54.72776, 55.928633], 12);
+
+  const markerIcon = L.icon({
+    iconUrl: '/src/assets/marker.png',
+    iconSize: [40, 40],
+  });
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution:
+      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  }).addTo(map);
+
+  L.marker([54.72776, 55.928633], { icon: markerIcon })
+    .addTo(map)
+    .bindPopup('ул. Гафури, 27 <br> вход со двора, 1 подъезд');
+};
+
+onMounted(() => loadLeafletMap());
 </script>
 
 <style scoped lang="scss">
-.screen {
-  position: relative;
-}
-
-.about {
-  &__card-item {
-    height: 100%;
-  }
-  &__card-actions {
-    position: absolute;
-    bottom: 0;
-  }
-}
-
-.abonements {
-  &__box {
-    width: 30%;
-    background: url('/src/assets/dragon.jpg') center center / cover;
-    box-shadow: 7px 0 7px 0 rgb(255 255 255 / 20%);
-    z-index: 1;
-    @media (max-width: 1024px) {
-      width: 40%;
-    }
-    @media (max-width: 600px) {
-      width: 25%;
-    }
-  }
-
-  &__slider {
-    width: 70%;
-    margin-left: -2%;
-    @media (max-width: 1024px) {
-      width: 60%;
-    }
-    @media (max-width: 600px) {
-      width: 75%;
-    }
-  }
-}
-
-.trainers {
-  &__card-item {
-    height: 100%;
-  }
-}
-
-.media {
-  &__video {
-    background: url('/src/assets/hongten.jpg') center center / cover;
-    height: 100%;
-    @media (max-width: 1024px) {
-      height: 260px;
-    }
-  }
-
-  &__grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    grid-template-areas:
-      'a a'
-      'b c';
-
-    @media (max-width: 1024px) {
-      grid-template-columns: 1fr;
-      grid-template-areas: 'a' 'b' 'c';
-    }
-
-    &-item {
-      height: 260px;
-
-      span {
-        z-index: 1;
-      }
-
-      &:nth-child(1) {
-        grid-area: a;
-      }
-      &:nth-child(2) {
-        grid-area: b;
-        background: url('/src/assets/kinjaz.jpg') center center / cover;
-      }
-      &:nth-child(3) {
-        grid-area: c;
-        background: url('/src/assets/dragon.jpg') center center / cover;
-      }
-    }
-  }
-}
+@import 'src/css/pages/index.scss';
 </style>

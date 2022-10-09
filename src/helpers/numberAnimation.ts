@@ -14,10 +14,8 @@ export const numberAnimation = (
     const progress = timestamp - start;
 
     el.innerHTML = `
-          ${Math.round(
-            oldValue + ((newValue - oldValue) * progress) / duration
-          )}
-        `;
+      ${Math.round(oldValue + ((newValue - oldValue) * progress) / duration)}
+    `;
 
     if (progress < duration) {
       window.requestAnimationFrame(step);

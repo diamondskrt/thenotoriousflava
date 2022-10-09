@@ -1,0 +1,13 @@
+form {
+  :deep(.q-field__prepend) {
+    padding-right: 4px;
+  }
+
+  :deep(.q-field__control),
+  :deep(.q-field__marginal) {
+    height: auto;
+  }
+  :deep(.q-field__prepend) {
+    margin-bottom: 1px;
+  }
+}

@@ -13,10 +13,10 @@
 </template>
 
 <script setup lang="ts">
-interface GradientChipProps {
+interface IGradientChipProps {
   bgWhiteText?: number;
   text: string;
 }
 
-defineProps<GradientChipProps>();
+defineProps<IGradientChipProps>();
 </script>
