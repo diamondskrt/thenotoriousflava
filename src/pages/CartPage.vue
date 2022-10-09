@@ -1,24 +1,25 @@
 <template>
   <main>
-    <section class="screen"></section>
+    <section ref="screenRef" class="screen"></section>
+
     <section class="cart" :class="getPadding">
       <q-breadcrumbs>
         <q-breadcrumbs-el label="Главная" to="/" />
         <q-breadcrumbs-el label="Корзина" />
       </q-breadcrumbs>
 
-      <div class="cart__section q-pt-xl">
+      <div class="cart__section q-mt-xl">
         <abonement-items v-if="step === 1" @on-execution-order="nextStep" />
 
         <div v-else class="form">
           <div v-if="success">
-            <the-icon name="success" :size="60" class="q-ml-md" />
+            <base-icon name="success" :size="60" class="q-ml-md" />
             <div class="text-subtitle1 q-my-md">
               Ваша заявка успешно отправлена!
             </div>
-            <q-btn color="primary" @click="prevStep">OK</q-btn>
+            <q-btn color="primary" padding="xs lg" @click="prevStep">OK</q-btn>
           </div>
-          <the-form v-else @submit="submit">
+          <note-form v-else @submit="submit">
             <template #left-button>
               <q-btn
                 square
@@ -28,7 +29,7 @@
                 @click="prevStep"
               />
             </template>
-          </the-form>
+          </note-form>
         </div>
       </div>
     </section>
@@ -37,32 +38,33 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { useQuasar } from 'quasar';
-import AbonementItems from 'components/parts/cart-page/AbonementItems.vue';
-import TheForm from 'components/TheForm.vue';
+import { useQuasar, scroll } from 'quasar';
+import AbonementItems from 'components/parts/AbonementItems.vue';
+import NoteForm from 'components/forms/NoteForm.vue';
+import BaseIcon from 'components/base/BaseIcon.vue';
 import { useAbonementStore } from 'stores/abonements';
 import { firebaseService } from 'services/firebase';
-import { Abonement } from 'models/indexPage';
-
-interface Form {
-  name: string;
-  phone: string;
-}
+import { IAbonement } from 'models/pages/indexPage';
+import { INoteForm } from 'models/forms';
 
 interface Order {
   userName: string;
   userPhone: string;
-  order: Abonement[];
+  orders: IAbonement[];
   processed: boolean;
 }
 
 const $q = useQuasar();
+
+const { getScrollTarget, setVerticalScrollPosition } = scroll;
 
 const abonementStore = useAbonementStore();
 
 const step = ref(1);
 
 const success = ref(false);
+
+const screenRef = ref<HTMLElement | null>(null);
 
 const prevStep = () => {
   if (step.value > 1) {
@@ -73,6 +75,13 @@ const prevStep = () => {
 const nextStep = () => {
   if (step.value < 2) {
     step.value++;
+
+    if (screenRef.value) {
+      const target = getScrollTarget(screenRef.value);
+      const offset = screenRef.value.offsetTop;
+      const duration = 200;
+      setVerticalScrollPosition(target, offset, duration);
+    }
   }
 };
 
@@ -86,13 +95,13 @@ const clearData = () => {
   abonementStore.clearAbonements();
 };
 
-const submit = async (form: Form) => {
+const submit = async (form: INoteForm) => {
   const { name, phone } = form;
 
-  await firebaseService.setDoc<Order>('orders', {
+  await firebaseService.setDoc<Order>('abonements', {
     userName: name,
     userPhone: phone,
-    order: selectedAbonements.value,
+    orders: selectedAbonements.value,
     processed: false,
   });
 
@@ -109,6 +118,10 @@ const submit = async (form: Form) => {
 }
 
 .cart {
+  @media (max-width: 960px) and (orientation: portrait) {
+    min-height: 800px;
+  }
+
   &__section {
     min-height: 300px;
   }

@@ -8,25 +8,28 @@
         </router-link>
       </q-toolbar>
     </q-header>
-    <the-form type="auth" @submit="submit" />
+    <auth-form @submit="submit" />
   </div>
 </template>
 
 <script setup lang="ts">
-import TheForm from 'components/TheForm.vue';
+import { useRouter } from 'vue-router';
+import { FirebaseError } from 'firebase/app';
+import AuthForm from 'components/forms/AuthForm.vue';
+import { useFirebaseStore } from 'stores/firebase';
 import { firebaseService } from 'services/firebase';
+import { IAuthForm } from 'models/forms';
 
-// вынести
-interface Form {
-  email: string;
-  password: string;
-}
+const router = useRouter();
 
-const submit = async (form: Form) => {
+const fireStore = useFirebaseStore();
+
+const submit = async (form: IAuthForm) => {
   try {
     await firebaseService.signIn(form.email, form.password);
+    router.push('/');
   } catch (error) {
-    console.log(error);
+    fireStore.setFBError(error as FirebaseError);
   }
 };
 </script>

@@ -60,6 +60,7 @@ module.exports = configure(function (/* ctx */) {
       alias: {
         services: path.join(__dirname, './src/services'),
         helpers: path.join(__dirname, './src/helpers'),
+        constants: path.join(__dirname, './src/constants'),
       },
       // vueRouterBase,
       // vueDevtools,
@@ -113,7 +114,7 @@ module.exports = configure(function (/* ctx */) {
       // directives: [],
 
       // Quasar plugins
-      plugins: [],
+      plugins: ['Dialog'],
     },
 
     // animations: 'all', // --- includes all animations

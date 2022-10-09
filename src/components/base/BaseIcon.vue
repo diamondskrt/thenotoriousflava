@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-interface TheIconProps {
+interface IBaseIconProps {
   name: string;
   color?: string;
   stroke?: string;
@@ -18,7 +18,7 @@ interface TheIconProps {
   height?: number;
 }
 
-withDefaults(defineProps<TheIconProps>(), {
+withDefaults(defineProps<IBaseIconProps>(), {
   color: '#ffffff',
   size: 26,
 });

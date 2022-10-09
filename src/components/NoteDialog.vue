@@ -2,20 +2,22 @@
   <q-dialog :model-value="openDialog" full-width full-height maximized>
     <div class="flex justify-center items-center bg-black">
       <div class="close" @click="onCloseDialog">
-        <the-icon name="close" :size="20" />
+        <base-icon name="close" :size="20" />
       </div>
       <div v-if="success" class="text-center">
-        <the-icon name="success" :size="60" class="q-ml-md" />
+        <base-icon name="success" :size="60" class="q-ml-md" />
         <div class="text-subtitle1 text-center q-my-md">
           Ваша заявка успешно отправлена!
         </div>
-        <q-btn color="primary" @click="onCloseDialog">OK</q-btn>
+        <q-btn color="primary" padding="xs lg" @click="onCloseDialog">
+          OK
+        </q-btn>
       </div>
       <div v-else class="form">
         <div class="text-h6 text-weight-regular text-uppercase text-center">
           {{ direction }}
         </div>
-        <the-form @submit="submit" />
+        <note-form @submit="submit" />
       </div>
     </div>
   </q-dialog>
@@ -23,28 +25,24 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
-import TheIcon from 'components/TheIcon.vue';
-import TheForm from 'components/TheForm.vue';
+import BaseIcon from 'components/base/BaseIcon.vue';
+import NoteForm from 'components/forms/NoteForm.vue';
 import { firebaseService } from 'services/firebase';
+import { INoteForm } from 'models/forms';
 
-interface NoteDialogProps {
+interface INoteDialogProps {
   dialog: boolean;
   direction: string;
 }
 
-interface Note {
+interface INote {
   userName: string;
   userPhone: string;
   direction: string;
   processed: boolean;
 }
 
-interface Form {
-  name: string;
-  phone: string;
-}
-
-const props = withDefaults(defineProps<NoteDialogProps>(), {
+const props = withDefaults(defineProps<INoteDialogProps>(), {
   dialog: false,
 });
 
@@ -78,10 +76,10 @@ const onCloseDialog = () => {
   }
 };
 
-const submit = async (form: Form) => {
+const submit = async (form: INoteForm) => {
   const { name, phone } = form;
 
-  await firebaseService.setDoc<Note>('notes', {
+  await firebaseService.setDoc<INote>('notes', {
     userName: name,
     userPhone: phone,
     direction: props.direction,

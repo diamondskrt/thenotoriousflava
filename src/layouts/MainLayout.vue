@@ -1,24 +1,61 @@
 <template>
   <q-layout view="lhr lpr lfr">
-    <the-header fixed @open-drawer="drawer = !drawer" />
-    <q-drawer
-      v-model="drawer"
-      side="right"
-      behavior="mobile"
-      :width="500"
-      overlay
-    >
-      item
+    <base-header fixed @open-drawer="drawer = !drawer" @scroll-to="scrollTo" />
+
+    <q-drawer v-model="drawer" side="right" behavior="mobile" overlay>
+      <div class="flex column justify-center items-center full-height">
+        <div class="text-center">
+          <user-profile />
+
+          <menu-items
+            v-if="isIndexPage"
+            column
+            @scroll-to="scrollTo"
+            class="q-mt-xl"
+          />
+        </div>
+      </div>
     </q-drawer>
-    <router-view />
-    <the-footer />
+
+    <router-view :scroll-to-link="scrollToLink" />
+
+    <base-footer />
   </q-layout>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import TheHeader from 'components/parts/TheHeader.vue';
-import TheFooter from 'components/parts/TheFooter.vue';
+import { ref, computed } from 'vue';
+import { useRouter } from 'vue-router';
+import BaseHeader from 'components/base/BaseHeader.vue';
+import BaseFooter from 'components/base/BaseFooter.vue';
+import UserProfile from 'components/parts/UserProfile.vue';
+import MenuItems from 'components/parts/MenuItems.vue';
 
 const drawer = ref(false);
+
+const scrollToLink = ref<string | null>(null);
+
+const router = useRouter();
+
+const isIndexPage = computed(() => router.currentRoute.value.path === '/');
+
+const scrollTo = (link: string) => {
+  if (drawer.value) {
+    drawer.value = false;
+  }
+
+  scrollToLink.value = link;
+};
 </script>
+
+<style scoped lang="scss">
+:deep(.q-drawer) {
+  @media (max-width: 960px) {
+    width: 70% !important;
+  }
+
+  @media (max-width: 600px) {
+    width: 80% !important;
+  }
+}
+</style>

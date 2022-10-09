@@ -58,15 +58,16 @@
       @click="emits('onExecutionOrder')"
     />
   </template>
+
   <template v-else>
-    <div>Корзина пуста</div>
+    <div class="text-body2">Корзина пуста</div>
   </template>
 </template>
 
 <script setup lang="ts">
 import { computed, DirectiveBinding } from 'vue';
 import { useAbonementStore } from 'stores/abonements';
-import { Abonement } from 'models/indexPage';
+import { IAbonement } from 'models/pages/indexPage';
 import { numberAnimation } from 'helpers/numberAnimation';
 
 const emits = defineEmits<{
@@ -79,7 +80,7 @@ const selectedAbonements = computed(() => abonementStore.selectedAbonements);
 
 const totalPrice = computed(() =>
   selectedAbonements.value.reduce(
-    (acc: number, curr: Abonement) => acc + curr.total,
+    (acc: number, curr: IAbonement) => acc + curr.total,
     0
   )
 );
@@ -90,15 +91,15 @@ const vNumflip = {
   },
 };
 
-const onDecrement = (abonement: Abonement) => {
+const onDecrement = (abonement: IAbonement) => {
   abonementStore.decrement(abonement);
 };
 
-const onIncrement = (abonement: Abonement) => {
+const onIncrement = (abonement: IAbonement) => {
   abonementStore.increment(abonement);
 };
 
-const onRemoveAbonement = (abonement: Abonement) => {
+const onRemoveAbonement = (abonement: IAbonement) => {
   abonementStore.removeAbonement(abonement);
 };
 </script>
