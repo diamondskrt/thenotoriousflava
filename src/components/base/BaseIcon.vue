@@ -4,7 +4,7 @@
     :width="(width ? width : size) + 'px'"
     :height="(height ? height : size) + 'px'"
   >
-    <use v-bind="{ 'xlink:href': '/src/assets/sprite.svg#' + name }" />
+    <use v-bind="{ 'xlink:href': '/images/sprite.svg#' + name }" />
   </svg>
 </template>
 

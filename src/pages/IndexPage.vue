@@ -78,7 +78,79 @@
       <div class="abonements__section flex q-mt-xl">
         <div class="abonements__box"></div>
         <div class="abonements__slider">
-          <base-carousel :items="abonementItems" />
+          <base-carousel :items="abonementItems">
+            <template #default="{ carouselItems, listClass }">
+              <q-carousel-slide
+                v-for="(item, i) in carouselItems"
+                :key="i"
+                :name="i"
+              >
+                <div class="row q-col-gutter-sm">
+                  <div
+                    v-for="abonement in item.chunkedArray"
+                    :key="abonement.id"
+                    :class="listClass"
+                  >
+                    <q-card
+                      class="carousel__card-item shadow flex justify-center items-center"
+                    >
+                      <div class="carousel__card-section text-center">
+                        <div
+                          class="text-subtitle1 text-uppercase text-weight-regular"
+                        >
+                          {{ abonement.title }}
+                        </div>
+                        <div
+                          class="text-subtitle1 text-uppercase text-weight-regular q-my-md"
+                        >
+                          <del v-if="abonement.discountPrice">
+                            {{ abonement.price }} ₽
+                          </del>
+                          <template v-else>{{ abonement.price }} ₽</template>
+                        </div>
+                        <div v-if="abonement.discountPrice">
+                          <gradient-chip
+                            :bgWhiteText="abonement.discountPrice"
+                            text="в первый месяц"
+                          />
+                        </div>
+
+                        <div
+                          v-if="useAbonement.foundAbonement(abonement)"
+                          class="flex justify-center items-center q-mt-md"
+                        >
+                          <q-btn
+                            color="accent"
+                            @click="useAbonement.onDecrement(abonement)"
+                          >
+                            <span>-</span>
+                          </q-btn>
+                          <div class="q-mx-sm">
+                            {{ useAbonement.foundAbonement(abonement).counter }}
+                            шт.
+                          </div>
+                          <q-btn
+                            color="accent"
+                            @click="useAbonement.onIncrement(abonement)"
+                          >
+                            <span>+</span>
+                          </q-btn>
+                        </div>
+                        <q-btn
+                          v-else
+                          color="accent"
+                          class="q-mt-md"
+                          @click="useAbonement.onAddAbonement(abonement)"
+                        >
+                          В корзину
+                        </q-btn>
+                      </div>
+                    </q-card>
+                  </div>
+                </div>
+              </q-carousel-slide>
+            </template>
+          </base-carousel>
         </div>
       </div>
     </section>
@@ -115,7 +187,7 @@
                   class="col-4 flex flex-start items-start"
                   :class="{ 'q-pa-none': $q.screen.lt.md }"
                 >
-                  <q-img :src="'src/assets/' + trainer.img" />
+                  <q-img :src="'/images/' + trainer.img" />
                 </q-card-section>
                 <q-card-section class="q-pt-xs">
                   <div class="text-h5 q-mt-sm q-mb-xs">{{ trainer.name }}</div>
@@ -194,32 +266,24 @@
     <section ref="contactsRef" class="contacts" :class="getPadding">
       <div class="text-h4 text-center text-uppercase">Контакты</div>
       <div class="contacts__section q-mt-xl">
-        <div class="row q-col-gutter-md">
-          <div class="col-12 col-md-6">
-            <div id="leaflet"></div>
-          </div>
-          <div class="col-12 col-md-6">
-            <div
-              class="d-flex column justify-center items-center text-center full-height"
-            >
-              <div class="text-subtitle1">Адрес: ул. Мажита Гафури, 27</div>
-              <div class="text-subtitle1">
-                <a href="https://clck.ru/U6TG9" target="_blank">
-                  смотреть на карте
-                </a>
-              </div>
-
-              <div class="text-subtitle1 q-my-md">
-                Телефон:
-                <a href="tel:+79373323635" target="_blank"
-                  >+7 (937) 332-36-35</a
-                >
-              </div>
-
-              <q-btn color="accent" @click="onOpenFormDialog()"
-                >Записаться</q-btn
-              >
+        <div class="leaflet-map">
+          <div id="leaflet"></div>
+          <div
+            class="info d-flex column justify-center items-center text-center full-height q-pa-md"
+          >
+            <div class="text-subtitle1">Адрес: ул. Мажита Гафури, 27</div>
+            <div class="text-subtitle1">
+              <a href="https://clck.ru/U6TG9" target="_blank">
+                смотреть на карте
+              </a>
             </div>
+
+            <div class="text-subtitle1 q-my-md">
+              Телефон:
+              <a href="tel:+79373323635" target="_blank">+7 (937) 332-36-35</a>
+            </div>
+
+            <q-btn color="accent" @click="onOpenFormDialog()">Записаться</q-btn>
           </div>
         </div>
       </div>
@@ -235,13 +299,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, Ref, onMounted } from 'vue';
+import { ref, watch, Ref, onMounted } from 'vue';
 import { useQuasar, scroll } from 'quasar';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import BaseCarousel from 'src/components/base/BaseCarousel.vue';
 import NoteDialog from 'src/components/NoteDialog.vue';
 import VideoOverlay from 'src/components/VideoOverlay.vue';
+import GradientChip from 'components/GradientChip.vue';
 import { IDirection } from 'models/pages/indexPage';
 import {
   directions,
@@ -250,6 +315,8 @@ import {
   tableRows,
   trainers,
 } from 'constants/pages/indexPage';
+import { getPadding } from 'composables/useSpacing';
+import { useAbonement } from 'composables/useAbonement';
 
 interface IndexPageProps {
   scrollToLink: string | null;
@@ -304,10 +371,6 @@ watch(
   }
 );
 
-const getPadding = computed(() =>
-  $q.screen.gt.sm ? 'q-px-xl q-py-xl' : 'q-px-md q-py-xl'
-);
-
 const onOpenFormDialog = (direction?: IDirection) => {
   showFormDialog.value = true;
   selectedDirection.value = direction ? direction.title : 'Танцы';
@@ -321,7 +384,7 @@ const loadLeafletMap = () => {
   const map = L.map('leaflet').setView([54.72776, 55.928633], 12);
 
   const markerIcon = L.icon({
-    iconUrl: '/src/assets/marker.png',
+    iconUrl: '/images/marker.png',
     iconSize: [40, 40],
   });
 

@@ -42,7 +42,7 @@
                         Выбранное направление: {{ note.direction }}
                       </div>
 
-                      <div class="actions">
+                      <div v-if="user && user.role === 'admin'" class="actions">
                         <q-btn
                           flat
                           color="positive"
@@ -116,7 +116,7 @@
                         </div>
                       </div>
 
-                      <div class="actions">
+                      <div v-if="user && user.role === 'admin'" class="actions">
                         <q-btn
                           flat
                           color="positive"
@@ -147,12 +147,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
+import { storeToRefs } from 'pinia';
 import { DocumentData } from 'firebase/firestore';
 import { useQuasar } from 'quasar';
 import { FirebaseError } from 'firebase/app';
 import { useFirebaseStore } from 'stores/firebase';
 import { firebaseService } from 'services/firebase';
+import { getPadding } from 'composables/useSpacing';
 
 interface UpdateDoc {
   processed: boolean;
@@ -162,9 +164,7 @@ const $q = useQuasar();
 
 const fireStore = useFirebaseStore();
 
-const getPadding = computed(() =>
-  $q.screen.gt.sm ? 'q-px-xl q-py-xl' : 'q-px-md q-py-xl'
-);
+const { user } = storeToRefs(useFirebaseStore());
 
 const notes = ref<DocumentData>([]);
 

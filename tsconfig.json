@@ -8,7 +8,8 @@
       "stores/*": ["src/stores/*"],
       "boot/*": ["src/boot/*"],
       "helpers/*": ["src/helpers/*"],
-      "constants/*": ["src/constants/*"]
+      "constants/*": ["src/constants/*"],
+      "composables/*": ["src/composables/*"]
     }
   }
 }
