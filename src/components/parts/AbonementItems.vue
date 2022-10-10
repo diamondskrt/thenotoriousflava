@@ -22,18 +22,24 @@
             </div>
 
             <div class="flex items-center q-my-lg">
-              <q-btn color="accent" @click="onDecrement(abonement)">
+              <q-btn
+                color="accent"
+                @click="useAbonement.onDecrement(abonement)"
+              >
                 <span>-</span>
               </q-btn>
               <div class="q-mx-sm">{{ abonement.counter }} шт.</div>
-              <q-btn color="accent" @click="onIncrement(abonement)">
+              <q-btn
+                color="accent"
+                @click="useAbonement.onIncrement(abonement)"
+              >
                 <span>+</span>
               </q-btn>
             </div>
 
             <div
               class="flex cursor-pointer"
-              @click="onRemoveAbonement(abonement)"
+              @click="useAbonement.onRemoveAbonement(abonement)"
             >
               <q-icon name="delete" size="20px" />
               <div class="q-ml-sm">Удалить</div>
@@ -69,6 +75,7 @@ import { computed, DirectiveBinding } from 'vue';
 import { useAbonementStore } from 'stores/abonements';
 import { IAbonement } from 'models/pages/indexPage';
 import { numberAnimation } from 'helpers/numberAnimation';
+import { useAbonement } from 'composables/useAbonement';
 
 const emits = defineEmits<{
   (e: 'onExecutionOrder'): void;
@@ -89,18 +96,6 @@ const vNumflip = {
   updated: (el: HTMLElement, binding: DirectiveBinding) => {
     numberAnimation(el, binding.oldValue, binding.value);
   },
-};
-
-const onDecrement = (abonement: IAbonement) => {
-  abonementStore.decrement(abonement);
-};
-
-const onIncrement = (abonement: IAbonement) => {
-  abonementStore.increment(abonement);
-};
-
-const onRemoveAbonement = (abonement: IAbonement) => {
-  abonementStore.removeAbonement(abonement);
 };
 </script>
 

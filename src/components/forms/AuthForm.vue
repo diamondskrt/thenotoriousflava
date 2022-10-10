@@ -14,7 +14,7 @@
       label="Пароль"
       class="q-mt-md"
     >
-      <template v-slot:append>
+      <template #append>
         <q-icon
           :name="showPassword ? 'visibility' : 'visibility_off'"
           class="cursor-pointer"

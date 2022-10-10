@@ -42,6 +42,37 @@
       width: 100%;
       margin-left: 0;
     }
+
+    .carousel {
+      &__card-item {
+        height: 500px;
+        background: url('/src/assets/abonements.jpg') center center / cover;
+      }
+
+      &__card-section {
+        z-index: 1;
+      }
+
+      :deep(.q-panel) {
+        &.scroll {
+          overflow-x: hidden;
+        }
+      }
+      :deep(.q-carousel__slide) {
+        padding: 0;
+      }
+
+      :deep(.q-carousel__navigation) {
+        .q-btn {
+          min-height: 1.2em;
+          min-width: 1.2em;
+        }
+      }
+
+      :deep(.q-icon) {
+        font-size: 1.2em;
+      }
+    }
   }
 }
 
@@ -96,15 +127,41 @@
 }
 
 .contacts {
-  #leaflet {
-    width: 100%;
+  .leaflet-map {
+    position: relative;
     height: 450px;
     @media (max-width: 600px) {
       height: 300px;
     }
-  }
 
-  a {
-    color: $primary;
+    #leaflet {
+      width: 100%;
+      height: 100%;
+    }
+
+    .info {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 35%;
+      z-index: 401;
+      background: rgba(0, 0, 0, 0.8);
+
+      @media (max-width: 960px) {
+        width: 50%;
+      }
+
+      @media (max-width: 600px) {
+        width: 80%;
+      }
+
+      @media (max-width: 300px) {
+        width: 100%;
+      }
+
+      a {
+        color: $primary;
+      }
+    }
   }
 }
