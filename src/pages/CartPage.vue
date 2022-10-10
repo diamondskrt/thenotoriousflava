@@ -38,7 +38,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { useQuasar, scroll } from 'quasar';
+import { scroll } from 'quasar';
 import AbonementItems from 'components/parts/AbonementItems.vue';
 import NoteForm from 'components/forms/NoteForm.vue';
 import BaseIcon from 'components/base/BaseIcon.vue';
@@ -46,6 +46,7 @@ import { useAbonementStore } from 'stores/abonements';
 import { firebaseService } from 'services/firebase';
 import { IAbonement } from 'models/pages/indexPage';
 import { INoteForm } from 'models/forms';
+import { getPadding } from 'composables/useSpacing';
 
 interface Order {
   userName: string;
@@ -53,8 +54,6 @@ interface Order {
   orders: IAbonement[];
   processed: boolean;
 }
-
-const $q = useQuasar();
 
 const { getScrollTarget, setVerticalScrollPosition } = scroll;
 
@@ -84,10 +83,6 @@ const nextStep = () => {
     }
   }
 };
-
-const getPadding = computed(() =>
-  $q.screen.gt.sm ? 'q-px-xl q-py-xl' : 'q-px-md q-py-xl'
-);
 
 const selectedAbonements = computed(() => abonementStore.selectedAbonements);
 

@@ -61,6 +61,7 @@ module.exports = configure(function (/* ctx */) {
         services: path.join(__dirname, './src/services'),
         helpers: path.join(__dirname, './src/helpers'),
         constants: path.join(__dirname, './src/constants'),
+        composables: path.join(__dirname, './src/composables'),
       },
       // vueRouterBase,
       // vueDevtools,
