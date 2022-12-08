@@ -1,6 +1,6 @@
 # thenotoriousflava (thenotoriousflava)
 
-description
+Quasar, Vue 3, Typescript, Pinia, Vite, Firebase
 
 ## Install the dependencies
 ```bash
