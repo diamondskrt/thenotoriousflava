@@ -12,7 +12,7 @@
       >
         <source src="~assets/bcone.mp4" type="video/mp4" />
       </video>
-      <div class="absolute text-center q-pa-md">
+      <div id="gsapMainTitle" class="absolute text-center q-pa-md">
         <div class="text-h3 text-uppercase">The Notorious Flava</div>
         <div class="text-h6 text-uppercase text-weight-light q-mt-md">
           студия танцев
@@ -21,61 +21,66 @@
     </section>
 
     <section ref="directionsRef" class="about" :class="getPadding">
-      <div class="text-h4 text-center text-uppercase">
+      <div id="gsapDirectionsTitle" class="text-h4 text-center text-uppercase">
         Танцуй, <span class="text-primary">вдохновляй</span>, создавай
       </div>
-      <div class="text-body1 q-mt-xl">
-        Наша программа обучения создана для разных возрастных групп, с учетом их
-        индивидуального развития. Мы регулярно организовываем мастер-классы от
-        мировых звезд, фестивали, кэмпы и многое другое, а также и сами
-        принимаем участие во всевозможных мероприятиях. Наши залы оборудованы
-        специальным покрытием, системами контроля температуры, бесплатным wifi -
-        созданы все условия для вашего комфорта.
-      </div>
-      <div class="about__cards q-mt-lg">
-        <div class="text-body1 text-center q-mb-md">
-          Выберите подходящее направление:
+      <div id="gsapDirections">
+        <div class="text-body1 q-mt-xl">
+          Наша программа обучения создана для разных возрастных групп, с учетом
+          их индивидуального развития. Мы регулярно организовываем мастер-классы
+          от мировых звезд, фестивали, кэмпы и многое другое, а также и сами
+          принимаем участие во всевозможных мероприятиях. Наши залы оборудованы
+          специальным покрытием, системами контроля температуры, бесплатным wifi
+          - созданы все условия для вашего комфорта.
         </div>
-        <div class="row q-col-gutter-md">
-          <div
-            v-for="direction in directions"
-            :key="direction.id"
-            class="col-xs-12 col-sm-6 col-md-4"
-          >
-            <q-card square class="about__card-item bg-accent">
-              <q-card-section>
-                <div class="text-h6">{{ direction.title }}</div>
-                <div class="text-subtitle2">
-                  Возрастная категория: {{ direction.ageCategory }}+
-                  <span v-if="direction.setOfGroups">(Идет набор групп)</span>
-                </div>
-              </q-card-section>
+        <div class="about__cards q-mt-lg">
+          <div class="text-body1 text-center q-mb-md">
+            Выберите подходящее направление:
+          </div>
+          <div class="row q-col-gutter-md">
+            <div
+              v-for="direction in directions"
+              :key="direction.id"
+              class="col-xs-12 col-sm-6 col-md-4"
+            >
+              <q-card square class="about__card-item bg-accent">
+                <q-card-section>
+                  <div class="text-h6">{{ direction.title }}</div>
+                  <div class="text-subtitle2">
+                    Возрастная категория: {{ direction.ageCategory }}+
+                    <span v-if="direction.setOfGroups">(Идет набор групп)</span>
+                  </div>
+                </q-card-section>
 
-              <q-separator dark inset />
+                <q-separator dark inset />
 
-              <div class="q-card__section--vert">
-                <div class="text-body2 q-pb-xl">
-                  {{ direction.description }}
-                </div>
+                <div class="q-card__section--vert">
+                  <div class="text-body2 q-pb-xl">
+                    {{ direction.description }}
+                  </div>
 
-                <div class="about__card-actions q-pb-md">
-                  <div
-                    class="text-body2 text-uppercase cursor-pointer"
-                    @click="onOpenFormDialog(direction)"
-                  >
-                    Записаться
+                  <div class="about__card-actions q-pb-md">
+                    <div
+                      class="text-body2 text-uppercase cursor-pointer"
+                      @click="onOpenFormDialog(direction)"
+                    >
+                      Записаться
+                    </div>
                   </div>
                 </div>
-              </div>
-            </q-card>
+              </q-card>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
     <section ref="abonementsRef" class="abonements" :class="getPadding">
-      <div class="text-h4 text-center text-uppercase">Абонементы</div>
-      <div class="abonements__section flex q-mt-xl">
+      <div id="gsapAbonementsTitle" class="text-h4 text-center text-uppercase">
+        Абонементы
+      </div>
+
+      <div id="gsapAbonements" class="abonements__section flex q-mt-xl">
         <div class="abonements__box"></div>
         <div class="abonements__slider">
           <base-carousel :items="abonementItems">
@@ -156,8 +161,11 @@
     </section>
 
     <section ref="scheduleRef" class="schedule" :class="getPadding">
-      <div class="text-h4 text-center text-uppercase">Расписание</div>
-      <div class="schedule__section q-mt-xl">
+      <div id="gsapScheduleTitle" class="text-h4 text-center text-uppercase">
+        Расписание
+      </div>
+
+      <div id="gsapSchedule" class="schedule__section q-mt-xl">
         <q-table
           :columns="tableColumns"
           :rows="tableRows"
@@ -170,8 +178,11 @@
     </section>
 
     <section class="trainers" :class="getPadding">
-      <div class="text-h4 text-center text-uppercase">Тренерский состав</div>
-      <div class="trainers__section q-mt-xl">
+      <div id="gsapTrainersTitle" class="text-h4 text-center text-uppercase">
+        Тренерский состав
+      </div>
+
+      <div id="gsapTrainers" class="trainers__section q-mt-xl">
         <div class="row q-col-gutter-md">
           <div
             v-for="(trainer, i) in trainers"
@@ -206,8 +217,11 @@
     </section>
 
     <section class="media" :class="getPadding">
-      <div class="text-h4 text-center text-uppercase">Медиа</div>
-      <div class="media__section q-mt-xl">
+      <div id="gsapMediaTitle" class="text-h4 text-center text-uppercase">
+        Медиа
+      </div>
+
+      <div id="gsapMedia" class="media__section q-mt-xl">
         <div class="row q-col-gutter-md">
           <div class="col-12 col-md-6">
             <div
@@ -264,8 +278,10 @@
     </section>
 
     <section ref="contactsRef" class="contacts" :class="getPadding">
-      <div class="text-h4 text-center text-uppercase">Контакты</div>
-      <div class="contacts__section q-mt-xl">
+      <div id="gsapContactsTitle" class="text-h4 text-center text-uppercase">
+        Контакты
+      </div>
+      <div id="gsapContacts" class="contacts__section q-mt-xl">
         <div class="leaflet-map">
           <div id="leaflet"></div>
           <div
@@ -317,6 +333,7 @@ import {
 } from 'constants/pages/indexPage';
 import { getPadding } from 'composables/useSpacing';
 import { useAbonement } from 'composables/useAbonement';
+import { gsapAnimation } from 'helpers/gsapAnimation';
 
 interface IndexPageProps {
   scrollToLink: string | null;
@@ -398,7 +415,48 @@ const loadLeafletMap = () => {
     .bindPopup('ул. Гафури, 27 <br> вход со двора, 1 подъезд');
 };
 
-onMounted(() => loadLeafletMap());
+const gsapAnimationStart = () => {
+  const fromLeft = [
+    '#gsapDirectionsTitle',
+    '#gsapAbonementsTitle',
+    '#gsapScheduleTitle',
+    '#gsapTrainersTitle',
+    '#gsapMediaTitle',
+    '#gsapContactsTitle',
+  ];
+
+  const fromBottom = [
+    '#gsapDirections',
+    '#gsapAbonements',
+    '#gsapSchedule',
+    '#gsapTrainers',
+    '#gsapMedia',
+    '#gsapContacts',
+  ];
+
+  fromBottom.forEach((el) => {
+    gsapAnimation(el, {
+      scrollTrigger: el,
+      y: 100,
+    });
+  });
+
+  fromLeft.forEach((el) => {
+    gsapAnimation(el, {
+      scrollTrigger: el,
+      y: 100,
+    });
+  });
+
+  gsapAnimation('#gsapMainTitle', {
+    ease: 'slow',
+  });
+};
+
+onMounted(() => {
+  loadLeafletMap();
+  gsapAnimationStart();
+});
 </script>
 
 <style scoped lang="scss">

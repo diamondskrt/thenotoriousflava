@@ -59,7 +59,7 @@
     <q-btn
       color="accent"
       square
-      label="Перейти к оформлению"
+      label="Оформить"
       class="q-mt-md"
       @click="emits('onExecutionOrder')"
     />

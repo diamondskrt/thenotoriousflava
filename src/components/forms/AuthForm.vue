@@ -12,7 +12,7 @@
       :type="showPassword ? 'text' : 'password'"
       no-error-icon
       label="Пароль"
-      class="q-mt-md"
+      class="q-my-md"
     >
       <template #append>
         <q-icon
