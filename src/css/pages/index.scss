@@ -9,6 +9,8 @@
 }
 
 .about {
+  overflow: hidden;
+
   &__card-item {
     height: 100%;
   }
@@ -19,6 +21,8 @@
 }
 
 .abonements {
+  overflow: hidden;
+
   &__box {
     width: 30%;
     background: url('/src/assets/dragon.jpg') center center / cover;
@@ -77,12 +81,16 @@
 }
 
 .trainers {
+  overflow: hidden;
+
   &__card-item {
     height: 100%;
   }
 }
 
 .media {
+  overflow: hidden;
+
   &__video {
     background: url('/src/assets/hongten.jpg') center center / cover;
     height: 100%;
@@ -127,6 +135,8 @@
 }
 
 .contacts {
+  overflow: hidden;
+
   .leaflet-map {
     position: relative;
     height: 450px;

@@ -1,5 +1,6 @@
 <template>
   <q-header
+    id="gsapHeader"
     :reveal="reveal"
     class="q-py-sm"
     :class="{ 'q-header--is-scrolled': isScrolled, fixed: fixed }"
@@ -53,12 +54,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onBeforeUnmount } from 'vue';
-import { useQuasar } from 'quasar';
+import { ref, computed, onBeforeUnmount, onMounted } from 'vue';
+import { QHeader, useQuasar } from 'quasar';
 import { useRouter } from 'vue-router';
 import UserProfile from 'components/parts/UserProfile.vue';
 import MenuItems from 'components/parts/MenuItems.vue';
 import { useAbonementStore } from 'stores/abonements';
+import { gsapAnimation } from 'helpers/gsapAnimation';
 
 interface IBaseHeaderProps {
   reveal?: boolean;
@@ -79,6 +81,12 @@ const router = useRouter();
 const $q = useQuasar();
 
 const isScrolled = ref(false);
+
+onMounted(() => {
+  gsapAnimation('#gsapHeader', {
+    ease: 'slow',
+  });
+});
 
 const selectedAbonements = computed(() => abonementStore.selectedAbonements);
 

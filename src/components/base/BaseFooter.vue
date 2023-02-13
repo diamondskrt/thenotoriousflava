@@ -1,5 +1,5 @@
 <template>
-  <footer class="bg-black text-center q-pa-xl">
+  <footer id="gsapFooter" class="bg-black text-center q-pa-xl">
     <div class="social flex justify-center">
       <a href="https://www.instagram.com/tnflava/" target="_blank">
         <base-icon name="instagram" />
@@ -15,8 +15,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
 import BaseIcon from 'components/base/BaseIcon.vue';
+import { gsapAnimation } from 'helpers/gsapAnimation';
 
 const getDate = computed(() => new Date().getFullYear());
+
+onMounted(() => {
+  gsapAnimation('#gsapFooter', {
+    scrollTrigger: '#gsapFooter',
+    ease: 'slow',
+  });
+});
 </script>

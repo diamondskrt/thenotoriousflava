@@ -8,11 +8,11 @@
     />
     <q-input
       v-model="form.phone"
-      mask="(###) ###-##-##"
+      :mask="phoneMask"
       :rules="phoneRules"
       no-error-icon
       placeholder="(999) 999-99-99"
-      class="q-mt-md"
+      class="q-my-md"
     >
       <template #prepend>
         <span class="text-body1">+7</span>
@@ -44,9 +44,12 @@ const form = reactive<INoteForm>({
 
 const nameRules = [(val: string) => !!val || 'Поле обязательно для заполнения'];
 
+const phoneMask = '(###) ###-##-##';
+
 const phoneRules = [
   (val: string) => !!val || 'Поле обязательно для заполнения',
-  (val: string) => val.length > 14 || 'Введите корректный номер телефона',
+  (val: string) =>
+    val.length >= phoneMask.length || 'Введите корректный номер телефона',
 ];
 
 const regexpNumber = (phone: string) => {
@@ -63,9 +66,7 @@ const clearForm = () => {
 const onSubmit = () => {
   formRef.value?.validate().then((valid) => {
     if (valid) {
-      if (form.phone) {
-        form.phone = regexpNumber(form.phone);
-      }
+      form.phone = regexpNumber(form.phone);
 
       emits('submit', form);
 
