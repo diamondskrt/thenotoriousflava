@@ -242,13 +242,12 @@
               <div class="media__grid-item soundcloud">
                 <iframe
                   width="100%"
+                  height="100%"
                   scrolling="no"
                   frameborder="no"
                   allow="autoplay"
-                  samesite="none"
-                  src="https://clck.ru/U6Tu6"
-                  class="full-height"
-                ></iframe>
+                  src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/947814232&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"
+                />
               </div>
               <a
                 href="https://www.instagram.com/tnflava/"
@@ -315,7 +314,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, Ref, onMounted } from 'vue';
+import { ref, watch, Ref, onMounted, nextTick } from 'vue';
 import { useQuasar, scroll } from 'quasar';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -453,8 +452,9 @@ const gsapAnimationStart = () => {
   });
 };
 
-onMounted(() => {
+onMounted(async () => {
   loadLeafletMap();
+  await nextTick();
   gsapAnimationStart();
 });
 </script>

@@ -15,13 +15,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from 'vue';
+import { computed, onMounted, nextTick } from 'vue';
 import BaseIcon from 'components/base/BaseIcon.vue';
 import { gsapAnimation } from 'helpers/gsapAnimation';
 
 const getDate = computed(() => new Date().getFullYear());
 
-onMounted(() => {
+onMounted(async () => {
+  await nextTick();
+
   gsapAnimation('#gsapFooter', {
     scrollTrigger: '#gsapFooter',
     ease: 'slow',

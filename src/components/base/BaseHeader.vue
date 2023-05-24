@@ -54,7 +54,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onBeforeUnmount, onMounted } from 'vue';
+import { ref, computed, onBeforeUnmount, onMounted, nextTick } from 'vue';
 import { QHeader, useQuasar } from 'quasar';
 import { useRouter } from 'vue-router';
 import UserProfile from 'components/parts/UserProfile.vue';
@@ -82,7 +82,9 @@ const $q = useQuasar();
 
 const isScrolled = ref(false);
 
-onMounted(() => {
+onMounted(async () => {
+  await nextTick()
+
   gsapAnimation('#gsapHeader', {
     ease: 'slow',
   });
