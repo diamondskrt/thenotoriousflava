@@ -1,6 +1,5 @@
 <template>
   <q-header
-    id="gsapHeader"
     :reveal="reveal"
     class="q-py-sm"
     :class="{ 'q-header--is-scrolled': isScrolled, fixed: fixed }"
@@ -54,13 +53,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onBeforeUnmount, onMounted, nextTick } from 'vue';
+import { ref, computed, onBeforeUnmount } from 'vue';
 import { QHeader, useQuasar } from 'quasar';
 import { useRouter } from 'vue-router';
 import UserProfile from 'components/parts/UserProfile.vue';
 import MenuItems from 'components/parts/MenuItems.vue';
 import { useAbonementStore } from 'stores/abonements';
-import { gsapAnimation } from 'helpers/gsapAnimation';
 
 interface IBaseHeaderProps {
   reveal?: boolean;
@@ -82,24 +80,12 @@ const $q = useQuasar();
 
 const isScrolled = ref(false);
 
-onMounted(async () => {
-  await nextTick()
-
-  gsapAnimation('#gsapHeader', {
-    ease: 'slow',
-  });
-});
-
 const selectedAbonements = computed(() => abonementStore.selectedAbonements);
 
 const isIndexPage = computed(() => router.currentRoute.value.path === '/');
 
 const onScroll = () => {
-  if (window.pageYOffset) {
-    isScrolled.value = true;
-  } else {
-    isScrolled.value = false;
-  }
+  isScrolled.value = Boolean(window.pageYOffset);
 };
 
 window.addEventListener('scroll', onScroll);
