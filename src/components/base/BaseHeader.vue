@@ -6,7 +6,7 @@
   >
     <q-toolbar>
       <router-link to="/">
-        <img src="~assets/logo.png" alt="logo" height="60" />
+        <img src="~assets/logo.png" alt="logo" height="60" >
       </router-link>
 
       <q-space />
@@ -41,7 +41,7 @@
           square
           color="accent"
           icon="drag_handle"
-          @click="emits('open-drawer')"
+          @click="onOpenDrawer"
         />
 
         <template v-else>
@@ -84,6 +84,14 @@ const selectedAbonements = computed(() => abonementStore.selectedAbonements);
 
 const isIndexPage = computed(() => router.currentRoute.value.path === '/');
 
+const onOpenDrawer = () => {
+  emits('open-drawer');
+};
+
+const scrollTo = (link: string) => {
+  emits('scroll-to', link);
+};
+
 const onScroll = () => {
   isScrolled.value = Boolean(window.pageYOffset);
 };
@@ -93,10 +101,6 @@ window.addEventListener('scroll', onScroll);
 onBeforeUnmount(() => {
   window.removeEventListener('scroll', onScroll);
 });
-
-const scrollTo = (link: string) => {
-  emits('scroll-to', link);
-};
 </script>
 
 <style scoped lang="scss">

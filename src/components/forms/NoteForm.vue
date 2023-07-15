@@ -21,7 +21,7 @@
 
     <div class="text-left">
       <slot name="left-button" />
-      <q-btn square color="accent" @click="onSubmit" label="Отправить" />
+      <q-btn square color="accent" label="Отправить" @click="onSubmit" />
     </div>
   </q-form>
 </template>

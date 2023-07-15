@@ -1,8 +1,16 @@
-# thenotoriousflava (thenotoriousflava)
+# thenotoriousflava
 
-Quasar, Vue 3, Typescript, Pinia, Vite, Firebase, GSAP
+Stack: Quasar, Vue 3, Typescript, Pinia, Vite, Firebase, GSAP
 
 See demo here: [https://thenotoriousflava.onrender.com/](https://thenotoriousflava.onrender.com/)
+
+![tnflava](https://github.com/diamondskrt/thenotoriousflava/blob/main/src/assets/tnflava.png?raw=true)
+
+## Приложение для студии танцев
+
+Реализован функционал авторизации, записи на новое направление, оформление абонемента через Firebase. Все заявки и абонементы можно посмотреть в админ.панели. Добавлена анимация разделов на главной странице (GSAP). Для отображения студии на карте использована библиотека Leaflet.
+
+Учетные данные для входа: login - mail@mail.ru, password - 123456
 
 ## Install the dependencies
 

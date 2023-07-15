@@ -15,10 +15,12 @@ export const useFirebaseStore = defineStore('firebase', {
   actions: {
     setUser(user: User) {
       this.user = user;
+
       saveState('user', this.user);
     },
     clearUser() {
       this.user = null;
+
       clearState('user');
     },
     setFBError(error: FirebaseError) {

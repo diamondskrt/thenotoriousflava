@@ -1,4 +1,6 @@
-export const numberAnimation = (
+import { DirectiveBinding } from 'vue';
+
+const numberAnimation = (
   el: HTMLElement,
   oldValue: number,
   newValue: number
@@ -27,4 +29,10 @@ export const numberAnimation = (
   el.innerHTML = `${oldValue}`;
 
   window.requestAnimationFrame(step);
+};
+
+export const vNumflip = {
+  updated: (el: HTMLElement, binding: DirectiveBinding) => {
+    numberAnimation(el, binding.oldValue, binding.value);
+  },
 };

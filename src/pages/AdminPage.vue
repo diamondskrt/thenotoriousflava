@@ -1,6 +1,6 @@
 <template>
   <main>
-    <section class="screen"></section>
+    <section class="screen" />
 
     <section class="admin" :class="getPadding">
       <q-breadcrumbs>
@@ -18,7 +18,7 @@
 
           <template v-else>
             <template v-if="notes.length">
-              <div v-for="(note, i) in notes" :key="i">
+              <div v-for="(note, i) in notes" :key="`notes-${i}`">
                 <q-expansion-item class="bg-grey-10">
                   <template #header>
                     <q-item-section>
@@ -42,7 +42,7 @@
                         Выбранное направление: {{ note.direction }}
                       </div>
 
-                      <div v-if="user && user.role === 'admin'" class="actions">
+                      <div v-if="user?.role === 'admin'" class="actions">
                         <q-btn
                           flat
                           color="positive"
@@ -77,7 +77,7 @@
 
           <template v-else>
             <template v-if="abonements.length">
-              <div v-for="(abonement, i) in abonements" :key="i">
+              <div v-for="(abonement, i) in abonements" :key="`abonement-${i}`">
                 <q-expansion-item class="bg-grey-10">
                   <template #header>
                     <q-item-section>
@@ -116,7 +116,7 @@
                         </div>
                       </div>
 
-                      <div v-if="user && user.role === 'admin'" class="actions">
+                      <div v-if="user?.role === 'admin'" class="actions">
                         <q-btn
                           flat
                           color="positive"

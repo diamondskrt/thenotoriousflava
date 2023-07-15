@@ -11,7 +11,7 @@
         class="col-xs-12 col-lg-6"
       >
         <div class="abonement flex">
-          <div class="abonement__image"></div>
+          <div class="abonement__image" />
           <div class="abonement__section q-ml-md">
             <div class="text-subtitle1">
               {{ abonement.title }}
@@ -61,7 +61,7 @@
       square
       label="Оформить"
       class="q-mt-md"
-      @click="emits('onExecutionOrder')"
+      @click="onNextStep"
     />
   </template>
 
@@ -71,14 +71,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, DirectiveBinding } from 'vue';
+import { computed } from 'vue';
 import { useAbonementStore } from 'stores/abonements';
 import { IAbonement } from 'models/pages/indexPage';
-import { numberAnimation } from 'helpers/numberAnimation';
 import { useAbonement } from 'composables/useAbonement';
+import { vNumflip } from 'directives/numflip';
 
 const emits = defineEmits<{
-  (e: 'onExecutionOrder'): void;
+  (e: 'next-step'): void;
 }>();
 
 const abonementStore = useAbonementStore();
@@ -92,10 +92,8 @@ const totalPrice = computed(() =>
   )
 );
 
-const vNumflip = {
-  updated: (el: HTMLElement, binding: DirectiveBinding) => {
-    numberAnimation(el, binding.oldValue, binding.value);
-  },
+const onNextStep = () => {
+  emits('next-step');
 };
 </script>
 

@@ -22,7 +22,7 @@
           </q-item-section>
         </q-item>
         <q-separator />
-        <q-item clickable v-close-popup @click="onSignOut">
+        <q-item v-close-popup clickable @click="onSignOut">
           <div class="flex items-center no-wrap">
             <div class="icon">
               <q-icon name="logout" size="20px" />

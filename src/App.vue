@@ -24,25 +24,25 @@ const $q = useQuasar();
 watch(
   fbError,
   (error) => {
-    if (error) {
-      const message =
-        fbErrorsObject[error.code] || 'Произошла неизвестная ошибка';
+    if (!error) return;
 
-      $q.dialog({
-        message,
-        ok: {
-          color: 'positive',
-          flat: true,
-          label: 'OK',
-        },
+    const message =
+      fbErrorsObject[error.code] || 'Произошла неизвестная ошибка';
+
+    $q.dialog({
+      message,
+      ok: {
+        color: 'positive',
+        flat: true,
+        label: 'OK',
+      },
+    })
+      .onOk(() => {
+        fireStore.clearFBError();
       })
-        .onOk(() => {
-          fireStore.clearFBError();
-        })
-        .onDismiss(() => {
-          fireStore.clearFBError();
-        });
-    }
+      .onDismiss(() => {
+        fireStore.clearFBError();
+      });
   },
   { deep: true }
 );

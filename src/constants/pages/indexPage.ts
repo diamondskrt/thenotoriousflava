@@ -183,3 +183,21 @@ export const trainers: ITrainer[] = [
     `,
   },
 ];
+
+export const gsapElementsfromLeft = [
+  '#gsapDirectionsTitle',
+  '#gsapAbonementsTitle',
+  '#gsapScheduleTitle',
+  '#gsapTrainersTitle',
+  '#gsapMediaTitle',
+  '#gsapContactsTitle',
+];
+
+export const gsapElementsfromBottom = [
+  '#gsapDirections',
+  '#gsapAbonements',
+  '#gsapSchedule',
+  '#gsapTrainers',
+  '#gsapMedia',
+  '#gsapContacts',
+];

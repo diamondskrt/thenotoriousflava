@@ -10,8 +10,8 @@
           <menu-items
             v-if="isIndexPage"
             column
-            @scroll-to="scrollTo"
             class="q-mt-xl"
+            @scroll-to="scrollTo"
           />
         </div>
       </div>
@@ -49,13 +49,15 @@ const scrollTo = (link: string) => {
 </script>
 
 <style scoped lang="scss">
-:deep(.q-drawer) {
-  @media (max-width: 960px) {
-    width: 70% !important;
-  }
+.q-layout {
+  :deep(.q-drawer) {
+    @media (max-width: 960px) {
+      width: 70% !important;
+    }
 
-  @media (max-width: 600px) {
-    width: 80% !important;
+    @media (max-width: 600px) {
+      width: 80% !important;
+    }
   }
 }
 </style>

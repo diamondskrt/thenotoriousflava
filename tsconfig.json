@@ -9,7 +9,8 @@
       "boot/*": ["src/boot/*"],
       "helpers/*": ["src/helpers/*"],
       "constants/*": ["src/constants/*"],
-      "composables/*": ["src/composables/*"]
+      "composables/*": ["src/composables/*"],
+      "directives/*": ["src/directives/*"]
     }
   }
 }

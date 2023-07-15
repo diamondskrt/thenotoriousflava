@@ -10,7 +10,7 @@
         muted="true"
         poster="~assets/thelegits.jpg"
       >
-        <source src="~assets/bcone.mp4" type="video/mp4" />
+        <source src="~assets/bcone.mp4" type="video/mp4" >
       </video>
       <div id="gsapMainTitle" class="absolute text-center q-pa-md">
         <div class="text-h3 text-uppercase">The Notorious Flava</div>
@@ -81,13 +81,13 @@
       </div>
 
       <div id="gsapAbonements" class="abonements__section flex q-mt-xl">
-        <div class="abonements__box"></div>
+        <div class="abonements__box" />
         <div class="abonements__slider">
           <base-carousel :items="abonementItems">
             <template #default="{ carouselItems, listClass }">
               <q-carousel-slide
                 v-for="(item, i) in carouselItems"
-                :key="i"
+                :key="`carousel-item-${i}`"
                 :name="i"
               >
                 <div class="row q-col-gutter-sm">
@@ -114,8 +114,8 @@
                           <template v-else>{{ abonement.price }} ₽</template>
                         </div>
                         <div v-if="abonement.discountPrice">
-                          <gradient-chip
-                            :bgWhiteText="abonement.discountPrice"
+                          <abonement-price
+                            :price="abonement.discountPrice"
                             text="в первый месяц"
                           />
                         </div>
@@ -186,7 +186,7 @@
         <div class="row q-col-gutter-md">
           <div
             v-for="(trainer, i) in trainers"
-            :key="i"
+            :key="`trainer-${i}`"
             class="col-12 col-sm-6"
           >
             <q-card flat square bordered class="trainers__card-item">
@@ -226,7 +226,7 @@
           <div class="col-12 col-md-6">
             <div
               class="media__video flex justify-center items-center"
-              @click="showVideoOverlay = true"
+              @click="onShowOverlay"
             >
               <q-btn
                 round
@@ -282,7 +282,7 @@
       </div>
       <div id="gsapContacts" class="contacts__section q-mt-xl">
         <div class="leaflet-map">
-          <div id="leaflet"></div>
+          <div id="leaflet" />
           <div
             class="info d-flex column justify-center items-center text-center full-height q-pa-md"
           >
@@ -314,14 +314,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, Ref, onMounted, nextTick } from 'vue';
+import { ref, watch, Ref, onMounted } from 'vue';
 import { useQuasar, scroll } from 'quasar';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import BaseCarousel from 'src/components/base/BaseCarousel.vue';
 import NoteDialog from 'src/components/NoteDialog.vue';
 import VideoOverlay from 'src/components/VideoOverlay.vue';
-import GradientChip from 'components/GradientChip.vue';
+import AbonementPrice from 'components/parts/AbonementPrice.vue';
 import { IDirection } from 'models/pages/indexPage';
 import {
   directions,
@@ -329,6 +329,8 @@ import {
   tableColumns,
   tableRows,
   trainers,
+  gsapElementsfromBottom,
+  gsapElementsfromLeft
 } from 'constants/pages/indexPage';
 import { getPadding } from 'composables/useSpacing';
 import { useAbonement } from 'composables/useAbonement';
@@ -369,7 +371,7 @@ const refsObject: RefsObject = {
   directionsRef,
   abonementsRef,
   scheduleRef,
-  contactsRef,
+  contactsRef
 };
 
 watch(
@@ -396,17 +398,21 @@ const clearData = () => {
   selectedDirection.value === 'Танцы';
 };
 
+const onShowOverlay = () => {
+  showVideoOverlay.value = true;
+};
+
 const loadLeafletMap = () => {
   const map = L.map('leaflet').setView([54.72776, 55.928633], 12);
 
   const markerIcon = L.icon({
     iconUrl: '/images/marker.png',
-    iconSize: [40, 40],
+    iconSize: [40, 40]
   });
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution:
-      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
   }).addTo(map);
 
   L.marker([54.72776, 55.928633], { icon: markerIcon })
@@ -415,46 +421,27 @@ const loadLeafletMap = () => {
 };
 
 const gsapAnimationStart = () => {
-  const fromLeft = [
-    '#gsapDirectionsTitle',
-    '#gsapAbonementsTitle',
-    '#gsapScheduleTitle',
-    '#gsapTrainersTitle',
-    '#gsapMediaTitle',
-    '#gsapContactsTitle',
-  ];
-
-  const fromBottom = [
-    '#gsapDirections',
-    '#gsapAbonements',
-    '#gsapSchedule',
-    '#gsapTrainers',
-    '#gsapMedia',
-    '#gsapContacts',
-  ];
-
-  fromBottom.forEach((el) => {
+  gsapElementsfromBottom.forEach((el) => {
     gsapAnimation(el, {
       scrollTrigger: el,
-      y: 100,
+      y: 100
     });
   });
 
-  fromLeft.forEach((el) => {
+  gsapElementsfromLeft.forEach((el) => {
     gsapAnimation(el, {
       scrollTrigger: el,
-      y: 100,
+      y: 100
     });
   });
 
   gsapAnimation('#gsapMainTitle', {
-    ease: 'slow',
+    ease: 'slow'
   });
 };
 
 onMounted(async () => {
   loadLeafletMap();
-  await nextTick();
   gsapAnimationStart();
 });
 </script>

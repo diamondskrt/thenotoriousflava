@@ -3,10 +3,10 @@
     :model-value="openDialog"
     no-esc-dismiss
     class="dialog"
-    @hide="openDialog = false"
+    @hide="onCloseDialog"
   >
     <section class="dialog__section">
-      <span class="close" @click="openDialog = false">
+      <span class="close" @click="onCloseDialog">
         <base-icon name="close" :size="20" />
       </span>
       <iframe
@@ -44,6 +44,10 @@ const openDialog = computed({
     emits('update:dialog', newValue);
   },
 });
+
+const onCloseDialog = () => {
+  emits('update:dialog', false);
+};
 </script>
 
 <style scoped lang="scss">

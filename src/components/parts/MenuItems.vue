@@ -5,7 +5,7 @@
       :key="item.title"
       class="text-subtitle1 text-uppercase cursor-pointer q-px-sm"
       :class="{ 'q-mt-md': column && i !== 0 }"
-      @click="emits('scroll-to', item.link)"
+      @click="onScrollTo(item.link)"
     >
       {{ item.title }}
     </div>
@@ -32,4 +32,8 @@ const menuItems: TMenuItems[] = [
   { title: 'Расписание', link: 'scheduleRef' },
   { title: 'Контакты', link: 'contactsRef' },
 ];
+
+const onScrollTo = (itemLink: string) => {
+  emits('scroll-to', itemLink);
+};
 </script>

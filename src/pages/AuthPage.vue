@@ -27,6 +27,7 @@ const fireStore = useFirebaseStore();
 const submit = async (form: IAuthForm) => {
   try {
     await firebaseService.signIn(form.email, form.password);
+
     router.push('/');
   } catch (error) {
     fireStore.setFBError(error as FirebaseError);

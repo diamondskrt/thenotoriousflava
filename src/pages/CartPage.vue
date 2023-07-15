@@ -1,6 +1,6 @@
 <template>
   <main>
-    <section ref="screenRef" class="screen"></section>
+    <section ref="screenRef" class="screen" />
 
     <section class="cart" :class="getPadding">
       <q-breadcrumbs>
@@ -9,7 +9,7 @@
       </q-breadcrumbs>
 
       <div class="cart__section q-mt-xl">
-        <abonement-items v-if="step === 1" @on-execution-order="nextStep" />
+        <abonement-items v-if="step === 1" @next-step="nextStep" />
 
         <div v-else class="form">
           <div v-if="success">
@@ -67,20 +67,20 @@ const screenRef = ref<HTMLElement | null>(null);
 
 const prevStep = () => {
   if (step.value > 1) {
-    step.value--;
+    step.value -= 1;
   }
 };
 
 const nextStep = () => {
   if (step.value < 2) {
-    step.value++;
+    step.value += 1;
 
-    if (screenRef.value) {
-      const target = getScrollTarget(screenRef.value);
-      const offset = screenRef.value.offsetTop;
-      const duration = 200;
-      setVerticalScrollPosition(target, offset, duration);
-    }
+    if (!screenRef.value) return;
+
+    const target = getScrollTarget(screenRef.value);
+    const offset = screenRef.value.offsetTop;
+    const duration = 200;
+    setVerticalScrollPosition(target, offset, duration);
   }
 };
 

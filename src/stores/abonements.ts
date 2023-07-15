@@ -14,18 +14,19 @@ export const useAbonementStore = defineStore('abonements', {
     },
     removeAbonement(abonement: IAbonement) {
       this.selectedAbonements = this.selectedAbonements.filter(
-        (el: IAbonement) => el.id !== abonement.id
+        ({ id }: IAbonement) => id !== abonement.id
       );
 
       saveState('abonements', this.selectedAbonements);
     },
     increment(abonement: IAbonement) {
       const foundAbonement = this.selectedAbonements.find(
-        (el: IAbonement) => el.id === abonement.id
+        ({ id }: IAbonement) => id === abonement.id
       );
 
-      if (foundAbonement && foundAbonement.counter < 5) {
-        foundAbonement.counter++;
+      if (foundAbonement?.counter < 5) {
+        foundAbonement.counter += 1;
+
         foundAbonement.total =
           (foundAbonement.discountPrice ?? foundAbonement.price) *
           foundAbonement.counter;
@@ -35,11 +36,12 @@ export const useAbonementStore = defineStore('abonements', {
     },
     decrement(abonement: IAbonement) {
       const foundAbonement = this.selectedAbonements.find(
-        (el: IAbonement) => el.id === abonement.id
+        ({ id }: IAbonement) => id === abonement.id
       );
 
-      if (foundAbonement && foundAbonement.counter > 1) {
-        foundAbonement.counter--;
+      if (foundAbonement?.counter > 1) {
+        foundAbonement.counter -= 1;
+
         foundAbonement.total =
           (foundAbonement.discountPrice ?? foundAbonement.price) *
           foundAbonement.counter;
@@ -51,6 +53,7 @@ export const useAbonementStore = defineStore('abonements', {
     },
     clearAbonements() {
       this.selectedAbonements = [];
+
       clearState('abonements');
     },
   },

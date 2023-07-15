@@ -24,7 +24,7 @@
     </q-input>
 
     <div class="text-left">
-      <q-btn square color="accent" @click="onSubmit" label="Отправить" />
+      <q-btn square color="accent" label="Отправить" @click="onSubmit" />
     </div>
   </q-form>
 </template>
@@ -52,10 +52,13 @@ const emailRules = [
 
 const showPassword = ref(false);
 
+const minNumber = 6;
+
 const passwordRules = [
   (val: string) => !!val || 'Поле обязательно для заполнения',
   (val: string): boolean | string =>
-    val.length >= 6 || 'Пароль должен содержать не менее 6 символов',
+    val.length >= minNumber ||
+    `Пароль должен содержать не менее ${minNumber} символов`,
 ];
 
 const clearForm = () => {
