@@ -43,7 +43,7 @@
               :key="direction.id"
               class="col-xs-12 col-sm-6 col-md-4"
             >
-              <q-card square class="about__card-item bg-accent">
+              <q-card square flat class="about__card-item bg-accent">
                 <q-card-section>
                   <div class="text-h6">{{ direction.title }}</div>
                   <div class="text-subtitle2">
@@ -97,6 +97,7 @@
                     :class="listClass"
                   >
                     <q-card
+                      flat
                       class="carousel__card-item shadow flex justify-center items-center"
                     >
                       <div class="carousel__card-section text-center">
@@ -318,9 +319,9 @@ import { ref, watch, Ref, onMounted } from 'vue';
 import { useQuasar, scroll } from 'quasar';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import BaseCarousel from 'src/components/base/BaseCarousel.vue';
-import NoteDialog from 'src/components/NoteDialog.vue';
-import VideoOverlay from 'src/components/VideoOverlay.vue';
+import BaseCarousel from 'components/base/BaseCarousel.vue';
+import NoteDialog from 'components/NoteDialog.vue';
+import VideoOverlay from 'components/VideoOverlay.vue';
 import AbonementPrice from 'components/parts/AbonementPrice.vue';
 import { IDirection } from 'models/pages/indexPage';
 import {
